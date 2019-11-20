@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="asset/bootstrap-4.3.1/css/bootstrap.min.css">
+    <script src="asset/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+  
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+          <h3>Port</h3>
+          <div class="form-group">
+            <select class="form-control" id="listPort">
+
+            </select>
+          </div>
+          <button id="choixPort" type="button" class="btn btn-light">Choix du Port</button> 
+        </div>
+        <div class="appChampi d-none">
+          <div class="row">
+          <table class="table-bordered text-center">
+            <thead>
+              <tr>
+                <th>Capteur</th>
+                <th>Valeur mesurée</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Temperature Air</th>
+                <th>NC</th>
+              </tr>
+              <tr>
+                <th>Temperature Sonde Seche </th>
+                <th>NC</th>
+              </tr>
+              <tr>
+                <th>Temperature Sonde Humide</th>
+                <th>NC</th>
+              </tr>
+              <tr>
+                <th>Taux Humidite</th>
+                <th>NC</th>
+              </tr>
+              <tr>
+                <th>Coefficient</th>
+                <th>NC</th>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table-bordered text-center">
+            <thead>
+              <tr>
+                <th>Configuration</th>
+                <th>Valeur Actuel</th>
+                <th>Valeur Demandée</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Consigne Air</th>
+                <th>NC</th>
+                <th>
+                  <div class="form-group">
+                    <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th>Consigne Humide</th>
+                <th>NC</th>
+                <th>
+                  <div class="form-group">
+                    <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th>Vitesse Modif Air</th>
+                <th>NC</th>
+                <th>
+                  <div class="form-group">
+                    <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th>Vitesse Modif Hum</th>
+                <th>NC</th>
+                <th>
+                  <div class="form-group">
+                    <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+                  </div>
+                </th>
+              </tr>
+            </tbody>
+          </table>
+          <button type="button" class="btn btn-light ">Envoyer</button> 
+          </div>
+          <div class="row">
+          <table class="table-bordered text-center">
+            <thead>
+              <tr>
+                <th>Brume</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Temps arrosage eau</th>
+                <th>NC</th>
+              </tr>
+              <tr>
+                <th>Temps Arret</th>
+                <th>NC</th>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table-bordered text-center">
+            <thead>
+              <tr>
+                <th>Desumidification</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Temps Desu</th>
+                <th>NC</th>
+              </tr>
+              <tr>
+                <th>Temps Arret</th>
+                <th>NC</th>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="row">
+          <ul>Nombre de jour : </ul>
+          <u1>NC</ul>
+          </div>
+        </div>
+      </div>
+</body>
+
+<script src="/script.js"></script>
+</html>
