@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="/socket.io/socket.io.js"></script>
     
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="asset/jquery-3.4.1/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" href="asset/bootstrap-4.3.1/css/bootstrap.min.css">
     <script src="asset/bootstrap-4.3.1/js/bootstrap.min.js"></script>
   
@@ -14,7 +14,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="row">
+        <div class="choixPort row">
           <h3>Port</h3>
           <div class="form-group">
             <select class="form-control" id="listPort">
@@ -35,7 +35,7 @@
             <tbody>
               <tr>
                 <th>Temperature Air</th>
-                <th>NC</th>
+                <th class="temperatureAir">NC</th>
               </tr>
               <tr>
                 <th>Temperature Sonde Seche </th>
@@ -47,11 +47,11 @@
               </tr>
               <tr>
                 <th>Taux Humidite</th>
-                <th>NC</th>
+                <th class="tauxHumidite">NC</th>
               </tr>
               <tr>
                 <th>Coefficient</th>
-                <th>NC</th>
+                <th class="coeff">NC</th>
               </tr>
             </tbody>
           </table>
@@ -66,7 +66,7 @@
             <tbody>
               <tr>
                 <th>Consigne Air</th>
-                <th>NC</th>
+                <th class="consigneAir">NC</th>
                 <th>
                   <div class="form-group">
                     <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
@@ -75,7 +75,7 @@
               </tr>
               <tr>
                 <th>Consigne Humide</th>
-                <th>NC</th>
+                <th class="consigneHum">NC</th>
                 <th>
                   <div class="form-group">
                     <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
@@ -84,7 +84,7 @@
               </tr>
               <tr>
                 <th>Vitesse Modif Air</th>
-                <th>NC</th>
+                <th class="modifConsigneAir">NC</th>
                 <th>
                   <div class="form-group">
                     <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
@@ -93,7 +93,7 @@
               </tr>
               <tr>
                 <th>Vitesse Modif Hum</th>
-                <th>NC</th>
+                <th class="modifConsigneHum">NC</th>
                 <th>
                   <div class="form-group">
                     <input type="text" class="form-control form-control text-center" placeholder="Saisir la valeur ">
@@ -142,7 +142,7 @@
           </div>
           <div class="row">
           <ul>Nombre de jour : </ul>
-          <u1>NC</ul>
+          <u1 class="nbJour">NC</ul>
           </div>
         </div>
       </div>
