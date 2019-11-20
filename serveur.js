@@ -19,21 +19,23 @@ io.on('connection', (socket) => {
  
   socket.on('choixPort', (choixPort) => {
     console.log(choixPort);
-
+    
+    const port = new serialPort(choixPort,{baudRate:9600,autoOpen:false});
+    port.open(function(err)
+    {
+      if(err){
+        console.log(err.message);
+      }else{
+        port.on('data', (data)=>{
+          process.stdout.write(data);
+        });
+      }
+    });
+    //setTimeout(()=>console.log(port.isOpen),5000);
+  });
     let jsonDataTest = '{"temperatureAir": 0, "consigneAir": 20.52, "tauxHumidite": 0, "consigneHum": 95, "modifConsigneAir": 0.12, "modifConsigneHum": 0.12, "dureeAction": 0, "coeff": 0, "etatVanneFroid": 10, "moySec": 0, "moyHum": 0, "nbJour": 1, "Millis": 0}';
     socket.emit('dataJson', JSON.parse(jsonDataTest));
   });
-
-  // socket.on('choixPort', (choixPort) => {
-  //   console.log(choixPort);
-  //   const port = new serialPort(choixPort,{baudRate:9600});
-  //   port.open(function (err) {
-  //     if (err) {
-  //       return console.log('Error opening port: ', err.message)
-  //     }
-  //   });
-  // });
-})
 
 const Arduino = require('./arduino');
 
