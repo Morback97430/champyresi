@@ -28,8 +28,12 @@ socket.on('connectPort', (isOpen) => {
     }
 });
 
+socket.on("error",(err) =>
+{
+    console.log(err.message);
 });
 
+});//fin du chargement du document HTML
 
 function accesApp(){
     $('.appChampi').removeClass('d-none');
@@ -45,11 +49,16 @@ function bindEvent(){
 
 function setAppChampi(data){
     $('.temperatureAir').text(data.temperatureAir);
-    $('.tauxHumidite').text(data.tauxHumidite);
-    $('.coeff').text(data.coeff);
     $('.consigneAir').text(data.consigneAir);
-    $('.consigneHum').text(data.consigneHum);
     $('.modifConsigneAir').text(data.modifConsigneAir);
+    $('.tauxHumidite').text(data.tauxHumidite);
+    $('.consigneHum').text(data.consigneHum);
     $('.modifConsigneHum').text(data.modifConsigneHum);
+    $('.coeff').text(data.coeff);
+    $('.moySec').text(data.moySec);
+    $('.moyHum').text(data.moyHum);
+    $('.tempsDeshum').text(data.tempsDeshum);
+    $('.tempsOuvertureBrume').text(data.tempsOuvertureBrume);
+    $('.tempsFermetureBrume').text(data.tempsFermetureBrume);
     $('.nbJour').text(data.nbJour);
 }
