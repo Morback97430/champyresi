@@ -8,9 +8,6 @@ socket = io();
 
 socket.on('dataJson', (data) => {
     console.log(data);
-    $('.appChampi').removeClass('d-none');
-    $('.choixPort').addClass('d-none');
-
     setAppChampi(data);
 });
 
@@ -20,7 +17,16 @@ socket.on('listPortName', (listPortName) => {
     });
 });
 
-socket.emit('reqListPort', true);
+
+
+socket.on('connectPort', (isOpen) => {
+    if(isOpen){
+        accesApp();
+    }else{
+        // TODO template retry port connection
+        socket.emit('reqListPort', true);
+    }
+});
 
 socket.on("error",(err) =>
 {
@@ -29,9 +35,14 @@ socket.on("error",(err) =>
 
 });//fin du chargement du document HTML
 
+function accesApp(){
+    $('.appChampi').removeClass('d-none');
+    $('.choixPort').addClass('d-none');
+}
 
 function bindEvent(){
     $('#choixPort').click(() => {
+        // TODO controle val choixPort
         socket.emit('choixPort', $('#listPort').val());
     });
 }
