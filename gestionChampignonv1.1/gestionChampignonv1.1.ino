@@ -107,7 +107,7 @@ void setup() {
 //____________________________________________________________________________________________ 
  
 void loop(){
-     document=generateJSON(document);
+     document=generateJSON();
      receiveData();
      envoieData(document);
 

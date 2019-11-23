@@ -8,6 +8,9 @@ const server = app.listen(3000,() => {
 const io = require('socket.io')(server);
 const serialPort = require('serialport');
 
+let enregistreJson = false;
+let jsonComplet = "";
+
 io.on('connection', (socket) => {
   socket.on('reqListPort', (data) => {
     let listPortName = [];
@@ -27,14 +30,28 @@ io.on('connection', (socket) => {
         console.log(err.message);
       }else{
         port.on('data', (data)=>{
-          process.stdout.write(data);
+            process.stdout.write(data); 
+            if (data == "FIN JSON")
+            {
+              enregistreJson = false;
+              socket.emit("dataJson",JSON.parse(jsonComplet));
+              jsonComplet = "";
+            }
+            if (enregistreJson){
+              jsonComplet += data;
+            }
+
+            if (data == "DEBUT JSON")
+              {
+                enregistreJson = true;
+              }
         });
       }
     });
     //setTimeout(()=>console.log(port.isOpen),5000);
   });
-    let jsonDataTest = '{"temperatureAir": 0, "consigneAir": 20.52, "tauxHumidite": 0, "consigneHum": 95, "modifConsigneAir": 0.12, "modifConsigneHum": 0.12, "dureeAction": 0, "coeff": 0, "etatVanneFroid": 10, "moySec": 0, "moyHum": 0, "nbJour": 1, "Millis": 0}';
-    socket.emit('dataJson', JSON.parse(jsonDataTest));
+    //let jsonDataTest = '{"temperatureAir": 0, "consigneAir": 20.52, "tauxHumidite": 0, "consigneHum": 95, "modifConsigneAir": 0.12, "modifConsigneHum": 0.12, "dureeAction": 0, "coeff": 0, "etatVanneFroid": 10, "moySec": 0, "moyHum": 0, "nbJour": 1, "Millis": 0}';
+    //socket.emit('dataJson', JSON.parse(jsonDataTest));
   });
 
 const Arduino = require('./arduino');
