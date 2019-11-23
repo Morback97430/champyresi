@@ -48,12 +48,14 @@ double tauxHumidite = 0;
 unsigned long intervalle = millis();// tout les 12H
 unsigned long intervalleJour = millis();
 
+long tempsOuvertureBrume = 15000;
+long tempsFermetureBrume = 0;
 long dix = 600000;
 long douze= 43200000;
 long jour = 86400000;
 int nbJour = 1;
 
-int dureeAction = 0; 
+unsigned long dureeAction = 0; 
 
 // Temps de la mesure des températures
 long timerMesure = 180000;//180000
@@ -61,7 +63,7 @@ long timerMesure = 180000;//180000
 // Temps de la mesure des températures humide
 long timerHum = 90000;// 90000
 long timerDeshum = 0;
-long ferme=0;
+
 
 // Timer entre les mesures et actions
 long timerRepete = 600000;
@@ -105,7 +107,31 @@ void setup() {
   
 // // LOOP : programme principal (qui tourne en boucle)
 //____________________________________________________________________________________________ 
- 
+StaticJsonDocument<capacity> generateJSON()
+{
+  document["temperatureAir"]=temperatureAir;
+  document["consigneAir"]=consigneAir;
+  document["modifConsigneAir"]=modifConsigneAir;
+  
+  document["tauxHumidite"]=tauxHumidite;
+  document["consigneHum"]=consigneHum;  
+  document["modifConsigneHum"]=modifConsigneHum;
+  
+  document["dureeAction"]=dureeAction;
+  document["coeff"]=coeff;
+  document["etatVanneFroid"]=etatVanneFroid;
+  
+  document["moySec"]=moySec;
+  document["moyHum"]=moyHum;
+  
+  document["tempsDeshum"]=timerDeshum;
+  document["tempsOuvertureBrume"]=tempsOuvertureBrume;
+  document["tempsFermetureBrume"]=tempsFermetureBrume;
+  
+  document["nbJour"]=nbJour;
+  document["Millis"]=millis();
+  return document;
+} 
 void loop(){
      document=generateJSON();
      receiveData();
@@ -339,15 +365,15 @@ void loop(){
     if (coeffH<0.3){
       delay(780000);
     }
-      if (coeffH > 0.3 && coeffH < 1   )  {ferme=105000;   } // ouverture 2 sec    
-      if (coeffH > 1 && coeffH < 2  )  {  ferme=60000;    } // ouverture 5 sec 
-      if (coeffH> 2   && coeffH < 3 )  { ferme=45000;     } // ouverture 15 sec
-      if (coeffH> 3              )  {  ferme=30000;    }
+      if (coeffH > 0.3 && coeffH < 1   )  {tempsFermetureBrume=105000;   } // ouverture 2 sec    
+      if (coeffH > 1 && coeffH < 2  )  {  tempsFermetureBrume=60000;    } // ouverture 5 sec 
+      if (coeffH> 2   && coeffH < 3 )  { tempsFermetureBrume=45000;     } // ouverture 15 sec
+      if (coeffH> 3              )  {  tempsFermetureBrume=30000;    }
 
-      periodeBrume(ferme);
+      periodeBrume();
 
       Serial.print("------------------arrosage----------");
-      Serial.print("temps");Serial.print(ferme);
+      Serial.print("temps");Serial.print(tempsFermetureBrume);
   }
   else if(tauxHumidite > consigneHum){
      coeffD=tauxHumidite-consigneHum;
@@ -366,9 +392,7 @@ void loop(){
     delay(timerDeshum);
     desactiveDeshum();  
   }
-    
-  generateJSON(document);
-  envoieData(document);
+      
   // Timer entre les mesures
   delay(timerRepete);
 }  //fin de loop.
@@ -453,16 +477,16 @@ void activeVentilo(){
   }
 }
 
-void periodeBrume(int ferme){
-  int ouvert = 15000;
+void periodeBrume(){
+  
   unsigned long debutbrume = millis();
   bool continuerMesurebrume = true;
   
   while(continuerMesurebrume){
     digitalWrite(pinEau, LOW); // allume
-    delay(ouvert); // 15sec
+    delay(tempsOuvertureBrume); // 15sec
     digitalWrite(pinEau, HIGH); // eteint
-    delay(ferme); // 3min
+    delay(tempsFermetureBrume); // 3min
 
     if(millis() - debutbrume > dix){
       continuerMesurebrume = false;
@@ -565,26 +589,11 @@ String lireVoieSerie(void)
     return data;
 }
 
-StaticJsonDocument<capacity> generateJSON()
-{
-  document = new StaticJsonDocument<capacity>();
-  document["temperatureAir"]=temperatureAir;
-  document["consigneAir"]=consigneAir;
-  document["tauxHumidite"]=tauxHumidite;
-  document["consigneHum"]=consigneHum;  
-  document["modifConsigneAir"]=modifConsigneAir;
-  document["modifConsigneHum"]=modifConsigneHum;
-  document["dureeAction"]=dureeAction;
-  document["coeff"]=coeff;
-  document["etatVanneFroid"]=etatVanneFroid;
-  document["moySec"]=moySec;
-  document["moyHum"]=moyHum;
-  document["nbJour"]=nbJour;
-  document["Millis"]=millis();
-  return document;
-}
-
 void envoieData(StaticJsonDocument<capacity> document){
+  Serial.print("DEBUT JSON");
+  delay(2000);
   serializeJson(document,Serial);
-  Serial.println();
+  delay(2000);
+  Serial.print("FIN JSON");
+  delay(2000);
 }

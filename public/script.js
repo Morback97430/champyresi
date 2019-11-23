@@ -22,7 +22,13 @@ socket.on('listPortName', (listPortName) => {
 
 socket.emit('reqListPort', true);
 
+socket.on("error",(err) =>
+{
+    console.log(err.message);
 });
+
+});//fin du chargement du document HTML
+
 
 function bindEvent(){
     $('#choixPort').click(() => {
