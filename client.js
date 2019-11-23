@@ -29,6 +29,10 @@ class Client{
                                     socket.emit('dataJson', valJson);
                                 });
 
+                                this.eventArduino.on('error', (err) => {
+                                    socket.emit('error', err);
+                                });
+
                                 socket.emit("connectPort", true);
                             }
                         }

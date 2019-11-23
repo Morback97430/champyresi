@@ -5,6 +5,9 @@ class Arduino{
         this.serialPort = pSerialPort;
         this.json = "noJson";
 
+        this.enregistreJson = false;
+        this.jsonComplet = "";
+
         this.port = null;
         this.eventEmitter = new events.EventEmitter();
     }
@@ -45,7 +48,30 @@ class Arduino{
                     // Plusieur rajout event 'data' ??
                     this.port.on('data', (data) => {
                         process.stdout.write(data); // TODO transform en pipe avec readLine buffer => string
-                        this.setJson(data);
+                        
+                        if (data == "FIN JSON"){
+                            this.enregistreJson = false;
+                            try
+                            {
+                                this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
+                                this.setJson(this.jsonComplet);
+                            }catch(err)
+                            {
+                                this.eventEmitter.emit("error",err.message);
+                            }
+                            this.jsonComplet = "";
+                        }
+
+                        if (this.enregistreJson){
+                            this.jsonComplet += data;
+                        }
+
+                        if (data == "DEBUT JSON")
+                        {
+                            this.enregistreJson = true;
+                        }
+                        
+
                         
                         this.eventEmitter.emit('dataJson', data);
                     });
