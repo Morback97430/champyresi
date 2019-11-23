@@ -27,12 +27,17 @@ socket.on("error",(err) =>
     console.log(err.message);
 });
 
+
 });//fin du chargement du document HTML
 
 
 function bindEvent(){
     $('#choixPort').click(() => {
-        socket.emit('choixPort', $('#listPort').val());
+        socket.emit('choixPort', $('#listPort').val())
+    });
+    $('#envoyer').click(()=>{
+        let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
+        socket.emit('newConsigne',envoie); 
     });
 }
 

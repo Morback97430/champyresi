@@ -54,7 +54,31 @@ io.on('connection', (socket) => {
         });
       }
     });
+
     //setTimeout(()=>console.log(port.isOpen),5000); 
+  });
+  socket.on("newConsigne",(envoie) =>
+  {
+    if (envoie.consigneAir != parseInt(envoie.consigneAir))
+    {
+      envoie.consigneAir = null;
+    }
+    if (envoie.consigneHum != parseInt(envoie.consigneHum))
+    {
+      envoie.consigneHum = null;
+    }
+    if (envoie.modifConsigneAir != parseInt(envoie.modifConsigneAir))
+    {
+      envoie.modifConsigneAir = null;
+    }
+    if (envoie.modifConsigneHum != parseInt(envoie.modifConsigneHum))
+    {
+      envoie.modifConsigneHum = null;
+    }
+    process.stdin.emit('data', (envoie)=>{
+      console.log(envoie);
+      port.write(envoie);
+  });
   });
     //let jsonDataTest = '{"temperatureAir": 0, "consigneAir": 20.52, "tauxHumidite": 0, "consigneHum": 95, "modifConsigneAir": 0.12, "modifConsigneHum": 0.12, "dureeAction": 0, "coeff": 0, "etatVanneFroid": 10, "moySec": 0, "moyHum": 0, "nbJour": 1, "Millis": 0}';
     //socket.emit('dataJson', JSON.parse(jsonDataTest));
