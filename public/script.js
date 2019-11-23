@@ -60,6 +60,10 @@ function bindEvent(){
         $('#choixPort').prop('disabled', true);
         socket.emit('choixPort', $('#listPort').val());
     });
+    $('#envoyer').click(()=>{
+        let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
+        socket.emit('newConsigne',envoie); 
+    });
 
     $('.gestionJour').click(() => {
         let jour = parseInt($('#saisiJour').val(), 10);

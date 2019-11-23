@@ -61,6 +61,30 @@ class Client{
             socket.on('dureeActivation', (dureeActivation) => {
                 this.arduino.envoieData("dureeActivation", {dureeActivation:dureeActivation});
             });
+
+            socket.on("newConsigne",(envoie) =>
+            {
+                if (envoie.consigneAir != parseInt(envoie.consigneAir))
+                {
+                    envoie.consigneAir = null;
+                }
+                if (envoie.consigneHum != parseInt(envoie.consigneHum))
+                {
+                    envoie.consigneHum = null;
+                }
+                if (envoie.modifConsigneAir != parseInt(envoie.modifConsigneAir))
+                {
+                    envoie.modifConsigneAir = null;
+                }
+                if (envoie.modifConsigneHum != parseInt(envoie.modifConsigneHum))
+                {
+                    envoie.modifConsigneHum = null;
+                }
+                process.stdin.emit('data', (envoie)=>{
+                    console.log(envoie);
+                    port.write(envoie);
+                });
+            });
         }
     }
 }
