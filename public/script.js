@@ -12,6 +12,8 @@ socket.on('dataJson', (data) => {
 });
 
 socket.on('listPortName', (listPortName) => {
+    $('#listPort').html("");
+
     listPortName.forEach(port => {
         $('#listPort').append(new Option(port, port));
     });
@@ -24,7 +26,8 @@ socket.on('connectPort', (isOpen) => {
         accesApp();
     }else{
         // TODO template retry port connection
-        socket.emit('reqListPort', true);
+        closeAccessApp();
+        socket.emit('reqListPort');
     }
 });
 
@@ -33,11 +36,20 @@ socket.on("error",(err) =>
     console.log(err.message);
 });
 
+
+// Première demande de liste Port
+socket.emit('reqListPort');
+
 });//fin du chargement du document HTML
 
 function accesApp(){
     $('.appChampi').removeClass('d-none');
     $('.choixPort').addClass('d-none');
+}
+
+function closeAccessApp(){
+    $('.appChampi').addClass('d-none');
+    $('.choixPort').removeClass('d-none');
 }
 
 function bindEvent(){
