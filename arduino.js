@@ -28,21 +28,24 @@ class Arduino{
 
     connect(choixPort){
         if(this.port == null){
-           this.port = new this.serialPort(choixPort,{baudRate:9600,autoOpen:false});
-        }else{
-            this.port.close((err) => {
-                if(!err){
-                 // bien close&
-                }else{
-                    console.log(err.message);
-                }
+            this.port = new this.serialPort(choixPort,{baudRate:9600,autoOpen:false});
+            this.port.on('close', () => {
+                this.eventEmitter.emit('connectPort', false);
+                this.port = null;
             });
+        }else if(!this.isOpen()){
+            this.port = null;
         }
 
         return new Promise((resolve, reject) => {
+            if(this.port == null){
+                reject(false);
+            }
+            
             this.port.open((err) => {
                 if(err){
                     console.log(err.message);
+                    this.port = null;
                     reject(false);
                 }else{
                     // Plusieur rajout event 'data' ??
