@@ -24,6 +24,7 @@ class Client{
                             
                             this.eventArduino.on('connectPort', (etatPort) => {
                                 socket.emit('connectPort', false);
+                                socket.emit('erreur', "Port fermer, choissisez un port");
                             });
 
                             // EventListener quand new dataJson emit to client
@@ -31,15 +32,16 @@ class Client{
                                 socket.emit('dataJson', valJson);
                             });
 
-                            this.eventArduino.on('error', (err) => {
-                                socket.emit('error', err);
+                            this.eventArduino.on('erreur', (err) => {
+                                socket.emit('erreur', err);
                             });
 
                             socket.emit("connectPort", true);
                         }
                     })
-                    .catch((etatport) => {
-                        socket.emit("connectPort", etatport);
+                    .catch((err) => {
+                        socket.emit("connectPort", false);
+                        socket.emit('erreur', err);
                     });
                 //setTimeout(()=>console.log(port.isOpen),5000);
             });
