@@ -39,14 +39,13 @@ class Arduino{
 
         return new Promise((resolve, reject) => {
             if(this.port == null){
-                reject(false);
+                reject("Port non Valide, choissisez un port");
             }
             
             this.port.open((err) => {
                 if(err){
-                    console.log(err.message);
                     this.port = null;
-                    reject(false);
+                    reject(err.message);
                 }else{
                     // Plusieur rajout event 'data' ??
                     this.port.on('data', (data) => {
@@ -60,7 +59,7 @@ class Arduino{
                                 this.setJson(this.jsonComplet);
                             }catch(err)
                             {
-                                this.eventEmitter.emit("error",err.message);
+                                this.eventEmitter.emit("erreur", err.message);
                             }
                             this.jsonComplet = "";
                         }

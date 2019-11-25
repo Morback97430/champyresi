@@ -31,9 +31,11 @@ socket.on('connectPort', (isOpen) => {
     }
 });
 
-socket.on("error",(err) =>
+socket.on("erreur", (err) =>
 {
-    console.log(err.message);
+    $('.messageErreur').text(err);
+    $('.erreur').fadeToggle().delay(5000).fadeToggle();
+    console.log(err);
 });
 
 
@@ -50,11 +52,14 @@ function accesApp(){
 function closeAccessApp(){
     $('.appChampi').addClass('d-none');
     $('.choixPort').removeClass('d-none');
+
+    $('#choixPort').prop('disabled', false);
 }
 
 function bindEvent(){
     $('#choixPort').click(() => {
         // TODO controle val choixPort
+        $('#choixPort').prop('disabled', true);
         socket.emit('choixPort', $('#listPort').val());
     });
 }
