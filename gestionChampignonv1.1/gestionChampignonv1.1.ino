@@ -28,12 +28,13 @@ float modifConsigneHum = 0.12;
 
 float consigneAir = 20.52;  //  20.90   18 5
 float modifConsigneAir = 0.12;
+
 int tabVal[31];
 
 float temperatureAir = 0;
 float temperatureAirP = 0;   
  
-float coeff = 0;
+float deltaTemp = 0;
 float coeffH = 0;
 float coeffD = 0;
 
@@ -47,28 +48,20 @@ double tauxHumidite = 0;
 
 unsigned long intervalle = millis();// tout les 12H
 unsigned long intervalleJour = millis();
+float debutTabTemp = 10;
+float finTabTemp = 35;
 
-long tempsOuvertureBrume = 15000;
-long tempsFermetureBrume = 0;
-long dix = 600000;
-long douze= 43200000;
-long jour = 86400000;
+unsigned long tempsFermetureBrume = 0;
+
 int nbJour = 1;
 
 unsigned long dureeAction = 0; 
 
-// Temps de la mesure des températures
-long timerMesure = 180000;//180000
-
-// Temps de la mesure des températures humide
-long timerHum = 90000;// 90000
-long timerDeshum = 0;
+unsigned long timerDeshum = 0;
 
 
 // Timer entre les mesures et actions
-long timerRepete = 600000;
-float debutTabTemp = 10;
-float finTabTemp = 35;
+
 //float pasTabTemp = 0.1;
 
 float tabPressionSaturante [251] = {
@@ -80,13 +73,15 @@ float tabPressionSaturante [251] = {
   45.183,45.446,45.709,45.972,46.235,46.498,46.761,47.024,47.287,47.55,47.825,48.1,48.375,48.65,48.925,49.2,49.475,49.75,50.025,50.3,50.589,50.878,51.167,51.456,51.745,52.034,52.323,52.612,52.901,53.19,53.494,53.798,54.102,54.406,54.71,55.014,55.318,55.622,55.926,56.23
 };
 
- 
+// CONSTANTE DUREE
+unsigned long tempsOuvertureBrume = 15000; // 15 secondes
+unsigned long timerHum            = 90000; // 1 minute 30
+unsigned long timerMesure         = 180000; // 3 minutes
+unsigned long dix                 = 600000; // 10 minutes
+unsigned long douze               = 43200000; // 12 heures
+unsigned long jour                = 86400000; // 24 heures
 
-// // SETUP //_____________________________________________________________________________________________ 
- 
-void setup() { 
- 
-  
+void setup() {  
   // initialisation de l'affichage et du mode console      
   Serial.begin(9600);             // préparation du moniteur série 
 
@@ -103,151 +98,41 @@ void setup() {
   digitalWrite(pinOuvert, HIGH);
   pinMode (pinFerme,OUTPUT);
   digitalWrite(pinFerme, HIGH);
-}                                 //Fin de setup 
+} //Fin de setup 
   
 // // LOOP : programme principal (qui tourne en boucle)
-//____________________________________________________________________________________________ 
-StaticJsonDocument<capacity> generateJSON()
-{
-  document["temperatureAir"]=temperatureAir;
-  document["consigneAir"]=consigneAir;
-  document["modifConsigneAir"]=modifConsigneAir;
-  
-  document["tauxHumidite"]=tauxHumidite;
-  document["consigneHum"]=consigneHum;  
-  document["modifConsigneHum"]=modifConsigneHum;
-  
-  document["dureeAction"]=dureeAction;
-  document["coeff"]=coeff;
-  document["etatVanneFroid"]=etatVanneFroid;
-  
-  document["moySec"]=moySec;
-  document["moyHum"]=moyHum;
-  
-  document["tempsDeshum"]=timerDeshum;
-  document["tempsOuvertureBrume"]=tempsOuvertureBrume;
-  document["tempsFermetureBrume"]=tempsFermetureBrume;
-  
-  document["nbJour"]=nbJour;
-  document["Millis"]=millis();
-  return document;
-} 
 void loop(){
-     document=generateJSON();
-     receiveData();
-     envoieData(document);
+  document = generateJSON();
+  receiveData();
+  envoieData(document);
 
-  // Calcule la moyenne des releves de temperature du capteur Sec
-  // Récupère la valeur mini de temperature du capteur Hum
-  // Jusqu'a que la temperature Hum augmente
-   
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   
-  if(millis()-intervalle >  douze) {
-    consigneAir=consigneAir - modifConsigneAir;
-    consigneHum = consigneHum - modifConsigneHum;
+  if(millis() - intervalle >  douze) {
+    consigneAir -= modifConsigneAir;
+    consigneHum -= modifConsigneHum;
 
-    intervalle=millis();
+    intervalle = millis();
   }
 
   if(millis() - intervalleJour > jour){
     nbJour++;
-    intervalleJour += jour;
+    intervalleJour = milli();
   }
 
   Serial.print("consigne  Air        "); Serial.println(consigneAir);
 
   // reglage du froid
 
-
+  temperatureAir = 0;
   temperatureAir = getTemperature(A0);
 
   if(temperatureAir > 10 && temperatureAir < 30){
-    temperatureAir = temperatureAir+etalonageAir;
+    temperatureAir = temperatureAir + etalonageAir;
     Serial.print("Temperature Air        "); Serial.println(temperatureAir);
     
-    coeff = temperatureAir-consigneAir;
-    
-    dureeAction = 0;  
-    
-    if (coeff > 0.3 && coeff < 0.5){
-      dureeAction = 2000; 
-      digitalWrite (pinFerme,LOW);
-      digitalWrite (pinOuvert,LOW);
-      delay(dureeAction);  
-      digitalWrite (pinFerme,HIGH); 
-      digitalWrite (pinOuvert,HIGH); 
-      Serial.print("vanne ouver 2 sec  ");  
-      etatVanneFroid += 2;
-    } // ouverture 2 sec    
-    if (coeff > 0.5 && coeff < 1){
-      dureeAction = 5000;  
-      digitalWrite (pinFerme,LOW);
-      digitalWrite (pinOuvert,LOW);
-      delay (dureeAction);  
-      digitalWrite (pinFerme,HIGH);
-      digitalWrite (pinOuvert,HIGH);  
-      Serial.print("vanne ouver 5 sec  ");
-      etatVanneFroid += 5;
-    } // ouverture 5 sec 
-    if (coeff > 1 && coeff < 1.5){
-      dureeAction = 15000; 
-      digitalWrite (pinFerme,LOW);
-      digitalWrite (pinOuvert,LOW);
-      delay (dureeAction);  
-      digitalWrite (pinFerme,HIGH);
-      digitalWrite (pinOuvert,HIGH);   
-      Serial.print("vanne ouver 15sec  ");
-      etatVanneFroid += 15;
-    } // ouverture 15 sec
-    if (coeff > 1.5){
-      dureeAction = 40000; 
-      digitalWrite (pinFerme,LOW);
-      digitalWrite (pinOuvert,LOW);
-      delay (dureeAction); 
-      digitalWrite (pinFerme,HIGH); 
-      digitalWrite (pinOuvert,HIGH);  
-      Serial.print("vanne ouver totale  ");
-      etatVanneFroid += 40;
-    } // ouverture totale 
+    deltaTemp = temperatureAir - consigneAir;
+    dureeAction = 0;
 
-    if (coeff < -0.3 && coeff > -0.5){
-      dureeAction = 2000; 
-      digitalWrite (pinFerme,LOW);
-      delay (dureeAction);  
-      digitalWrite (pinFerme,HIGH);  
-      Serial.print("vanne ferme 2 sec  ");
-      etatVanneFroid -= 2;
-    } // fermeture 2 sec
-    if (coeff < -0.5 && coeff > -1){
-      dureeAction = 5000; 
-      digitalWrite (pinFerme,LOW);
-      delay (dureeAction);  
-      digitalWrite (pinFerme,HIGH);  
-      Serial.print("vanne ferme 5 sec  ");
-      etatVanneFroid -= 5;
-    } // fermeture 5 sec
-    if (coeff < -1 && coeff > -1.5){ 
-      dureeAction = 15000;
-      digitalWrite (pinFerme,LOW);
-      delay (dureeAction);  
-      digitalWrite (pinFerme,HIGH);  
-      Serial.print("vanne ferme 15 sec  ");
-      etatVanneFroid -= 15;
-    } // fermeture 15 sec
-    if (coeff < -1.5){
-      dureeAction = 40000;
-      digitalWrite (pinFerme,LOW);
-      delay (dureeAction); 
-      digitalWrite (pinFerme,HIGH);  
-      Serial.print("vanne ferme 40 sec  ");
-      etatVanneFroid -= 40;
-    } // fermeture totale
-
-    if(etatVanneFroid < 0){
-      etatVanneFroid = 0;
-    }else if(etatVanneFroid > 30){
-      etatVanneFroid = 30;
-    }
+    gestionDeltaAir(deltaTemp);  
   }
 
   activeVentilo();
@@ -394,9 +279,100 @@ void loop(){
   }
       
   // Timer entre les mesures
-  delay(timerRepete);
+  delay(dix);
 }  //fin de loop.
 
+void gestionDeltaAir(float deltaTemp){
+  unsigned long duree = 0;
+
+  if(deltaTemp > 0){   
+    if (deltaTemp > 0.3 && deltaTemp < 0.5){
+      duree = 2000;
+    } // ouverture 2 sec    
+    if (deltaTemp > 0.5 && deltaTemp < 1){
+      duree = 5000;
+    } // ouverture 5 sec 
+    if (deltaTemp > 1 && deltaTemp < 1.5){
+      duree = 15000;
+    } // ouverture 15 sec
+    if (deltaTemp > 1.5){
+      duree = 40000;
+    } // ouverture totale
+
+    gestionDeltaAirPositif(duree);
+  }
+
+  if(deltaTemp < 0){
+    if (deltaTemp < -0.3 && deltaTemp > -0.5){
+      duree = 2000; 
+    } // fermeture 2 sec
+    if (deltaTemp < -0.5 && deltaTemp > -1){
+      duree = 5000; 
+    } // fermeture 5 sec
+    if (deltaTemp < -1 && deltaTemp > -1.5){ 
+      duree = 15000;
+    } // fermeture 15 sec
+    if (deltaTemp < -1.5){
+      duree = 40000;
+    } // fermeture totale
+    
+    gestionDeltaAirNegatif(duree);
+  }
+   
+  if(etatVanneFroid < 0){
+    etatVanneFroid = 0;
+  }else if(etatVanneFroid > 30){
+    etatVanneFroid = 30;
+  }
+}
+
+void gestionDeltaAirPositif(unsigned long duree){
+  digitalWrite (pinFerme,LOW);
+  digitalWrite (pinOuvert,LOW);
+  delay(duree);  
+  digitalWrite (pinFerme,HIGH); 
+  digitalWrite (pinOuvert,HIGH); 
+  Serial.print("vanne ouvert"); Serial.println(duree / 1000); Serial.println("sec  ");  
+  etatVanneFroid += duree / 1000;
+
+  dureeAction = duree;
+}
+
+void gestionDeltaAirNegatif(unsigned long duree){
+  digitalWrite (pinFerme,LOW);
+  delay (duree); 
+  digitalWrite (pinFerme,HIGH);
+  Serial.print("vanne ferme"); Serial.println(duree / 1000); Serial.println("sec  ");
+  etatVanneFroid -= duree / 1000;
+
+  dureeAction = duree;
+}
+
+StaticJsonDocument<capacity> generateJSON()
+{
+  document["temperatureAir"]=temperatureAir;
+  document["consigneAir"]=consigneAir;
+  document["modifConsigneAir"]=modifConsigneAir;
+  
+  document["tauxHumidite"]=tauxHumidite;
+  document["consigneHum"]=consigneHum;  
+  document["modifConsigneHum"]=modifConsigneHum;
+  
+  document["dureeAction"]=dureeAction;
+  document["coeff"]=deltaTemp;
+  document["etatVanneFroid"]=etatVanneFroid;
+  
+  document["moySec"]=moySec;
+  document["moyHum"]=moyHum;
+  
+  document["tempsDeshum"]=timerDeshum;
+  document["tempsOuvertureBrume"]=tempsOuvertureBrume;
+  document["tempsFermetureBrume"]=tempsFermetureBrume;
+  
+  document["nbJour"]=nbJour;
+  document["Millis"]=millis();
+  return document;
+} 
 
 float getTemperature(int pin){
   int temperatureP = 0;
@@ -423,6 +399,7 @@ float getTemperature(int pin){
     return temperature;
 }
 
+// TODO Recup taille d'un tableau
 int calculMoySondeAna(int tab[], int tailleTab){
   int total = 0;
   for(int i = 0; i < tailleTab - 1; i++){
@@ -592,7 +569,7 @@ String lireVoieSerie(void)
 void envoieData(StaticJsonDocument<capacity> document){
   Serial.print("DEBUT JSON");
   delay(2000);
-  serializeJson(document,Serial);
+  serializeJson(document, Serial);
   delay(2000);
   Serial.print("FIN JSON");
   delay(2000);
