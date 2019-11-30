@@ -19,8 +19,6 @@ socket.on('listPortName', (listPortName) => {
     });
 });
 
-
-
 socket.on('connectPort', (isOpen) => {
     if(isOpen){
         accesApp();
