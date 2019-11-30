@@ -99,13 +99,52 @@ void setup() {
   pinMode (pinFerme,OUTPUT);
   digitalWrite(pinFerme, HIGH);
 } //Fin de setup 
-  
+
 // // LOOP : programme principal (qui tourne en boucle)
 void loop(){
+  ioData();
+
+  cronTimer();
+
+  Serial.print("consigne  Air : "); Serial.println(consigneAir);
+
+  // reglage du Temperature Air
+  temperatureAir = 0;
+  temperatureAir = getTemperature(A0);
+
+  if(temperatureAir > 10 && temperatureAir < 30){
+    temperatureAir = temperatureAir + etalonageAir;
+    Serial.print("Temperature Air        "); Serial.println(temperatureAir);
+    
+    deltaTemp = temperatureAir - consigneAir;
+    dureeAction = 0;
+
+    regulateurAir(deltaTemp);  
+  }
+
+
+  moySec = 0;
+  moyHum = 0;
+  // init moySec et moyHum
+  gestionHumidite();
+  Serial.println("Fin des Releve");
+
+  tauxHumidite =  calculHumidite();
+  Serial.print("tauxHumidite"); Serial.println(tauxHumidite);  
+    
+  regulateurHumidite();
+      
+  // Timer entre les mesures
+  delay(dix);
+}  //fin de loop.
+
+void ioData(){
   document = generateJSON();
   receiveData();
   envoieData(document);
+}
 
+void cronTimer(){
   if(millis() - intervalle >  douze) {
     consigneAir -= modifConsigneAir;
     consigneHum -= modifConsigneHum;
@@ -117,172 +156,10 @@ void loop(){
     nbJour++;
     intervalleJour = milli();
   }
+}
 
-  Serial.print("consigne  Air        "); Serial.println(consigneAir);
 
-  // reglage du froid
-
-  temperatureAir = 0;
-  temperatureAir = getTemperature(A0);
-
-  if(temperatureAir > 10 && temperatureAir < 30){
-    temperatureAir = temperatureAir + etalonageAir;
-    Serial.print("Temperature Air        "); Serial.println(temperatureAir);
-    
-    deltaTemp = temperatureAir - consigneAir;
-    dureeAction = 0;
-
-    gestionDeltaAir(deltaTemp);  
-  }
-
-  activeVentilo();
-  
-  // calcul moyenne du lot Sec
-  float temperatureSecP = 0;
-  float lotTempSec = 0;
-  float moyLotSec = 0;
-
-  // calcul moyenne sec
-  float totalTempSec = 0;
-  float compteurSec = 0;
-
-  moySec = 0;
-
-  // calcul moyenne du lot Hum  
-  float temperatureHumP = 0;
-  float lotTempHum = 0;
-  float moyLotHum = 0;
-
-  // calcul moyenne hum
-  float totalTempHum = 0;
-  float compteurHum = 0;
-
-  moyHum = 0;
-
-  unsigned long debutMesure = millis();
-
-  bool continuerMesure = true;
-
-  while(continuerMesure){
-    // ---------------------------------------------------------------- //
-    // Partie temperature sec
-    int nbMesure = 0;
-
-    // calcul lot de temperature sec
-    while(nbMesure < 20){
-      temperatureSecP = getTemperature(A1);
-
-      if(temperatureSecP > 10 && temperatureSecP < 30){
-        lotTempSec += temperatureSecP;
-        nbMesure++;
-      }
-    }
-
-  // total temperature sec
-  totalTempSec += lotTempSec / nbMesure;
-  compteurSec++; // nombre de valeur de tempSec ajouter
-
-  lotTempSec = 0;
-
-    // ---------------------------------------------------------------- //
-    // Partie temperature humide
-    if(millis() - debutMesure > timerHum){ // commence au bout de 1m30
-      nbMesure = 0;
-
-      // calcul lot de temperature hum
-      while(nbMesure < 20){
-        temperatureHumP = getTemperature(A2);  // acquisition de la température hum
-
-        if(temperatureHumP > 10 && temperatureHumP < 30){
-          lotTempHum += temperatureHumP;
-          nbMesure++;
-        }
-      }
-      
-      // total temperature hum
-      totalTempHum += lotTempHum / nbMesure;
-      compteurHum++;
-
-      lotTempHum=0;
-    }
-    
-    delay(1000);
-
-    if(millis() - debutMesure > timerMesure){
-      continuerMesure = false;
-    }
-  }
-
-  desactiveVentilo();
-
-  Serial.println("Fin des Releve");
-   
-  moySec = totalTempSec / compteurSec; // Valeur moyenne
-  moySec += etalonageSec;
-  
-  moyHum = totalTempHum / compteurHum; // Valeur moyenne
-  moyHum += etalonageHum;
-    
-  Serial.print("Temperature Seche"); Serial.println(moySec);
-  Serial.print("Temperature Humide"); Serial.println(moyHum);
-
-  tauxHumidite = 0;
-      
-  float pressionSaturanteHum = 0;
-  float pressionSaturanteSec = 0;
-
-  pressionSaturanteHum = calculPression(moyHum);
-  pressionSaturanteSec = calculPression(moySec);
-
-  double PW = 0;
-
-  PW = pressionSaturanteHum - 1013 * 0.000662 * (moySec - moyHum);
-
-  tauxHumidite = PW/pressionSaturanteSec * 100;
-
-  //Serial.print("pressionSaturanteSec"); Serial.println(pressionSaturanteSec);
-  //Serial.print("pressionSaturantehum"); Serial.println(pressionSaturanteHum);
-  Serial.print("tauxHumidite"); Serial.println(tauxHumidite);  
-    
-  // Action
-  if(tauxHumidite < consigneHum){
-    coeffH=consigneHum-tauxHumidite;
-    if (coeffH<0.3){
-      delay(780000);
-    }
-      if (coeffH > 0.3 && coeffH < 1   )  {tempsFermetureBrume=105000;   } // ouverture 2 sec    
-      if (coeffH > 1 && coeffH < 2  )  {  tempsFermetureBrume=60000;    } // ouverture 5 sec 
-      if (coeffH> 2   && coeffH < 3 )  { tempsFermetureBrume=45000;     } // ouverture 15 sec
-      if (coeffH> 3              )  {  tempsFermetureBrume=30000;    }
-
-      periodeBrume();
-
-      Serial.print("------------------arrosage----------");
-      Serial.print("temps");Serial.print(tempsFermetureBrume);
-  }
-  else if(tauxHumidite > consigneHum){
-     coeffD=tauxHumidite-consigneHum;
-
-    if (coeffD<0.3){
-      delay(780000);
-    }
-
-    if (coeffD > 0.3 && coeffD < 1   )  {timerDeshum=180000;   } // ouverture 2 sec    
-    if (coeffD > 1 && coeffD < 2  )  {  timerDeshum=300000;    } // ouverture 5 sec 
-    if (coeffD > 2   && coeffD < 3 )  { timerDeshum=360000;     } // ouverture 15 sec
-    if (coeffD > 3              )  {  timerDeshum=480000;    }
-    activeDeshum();
-    Serial.print("------------------desu----------");
-    Serial.print("temps");Serial.print(timerDeshum);
-    delay(timerDeshum);
-    desactiveDeshum();  
-  }
-      
-  // Timer entre les mesures
-  delay(dix);
-}  //fin de loop.
-
-void gestionDeltaAir(float deltaTemp){
+void regulateurAir(float deltaTemp){
   unsigned long duree = 0;
 
   if(deltaTemp > 0){   
@@ -326,6 +203,45 @@ void gestionDeltaAir(float deltaTemp){
   }
 }
 
+void regulateurHumidite(){
+ // Action
+  if(tauxHumidite < consigneHum){
+    coeffH = consigneHum - tauxHumidite;
+    if (coeffH<0.3){
+      delay(780000);
+    }
+    if (coeffH > 0.3 && coeffH < 1) {tempsFermetureBrume = 105000;} // ouverture 2 sec    
+    if (coeffH > 1 && coeffH < 2)   {tempsFermetureBrume = 60000;} // ouverture 5 sec 
+    if (coeffH > 2 && coeffH < 3)   {tempsFermetureBrume = 45000;} // ouverture 15 sec
+    if (coeffH > 3)                 {tempsFermetureBrume = 30000;}
+
+    periodeBrume();
+
+    Serial.print("------------------arrosage----------");
+    Serial.print("temps");Serial.print(tempsFermetureBrume);
+  }
+  else if(tauxHumidite > consigneHum){
+     coeffD=tauxHumidite-consigneHum;
+
+    if (coeffD<0.3){
+      delay(780000);
+    }
+
+    if (coeffD > 0.3  && coeffD < 1)  {timerDeshum=180000;} // ouverture 2 sec    
+    if (coeffD > 1    && coeffD < 2)  {timerDeshum=300000;} // ouverture 5 sec 
+    if (coeffD > 2    && coeffD < 3)  {timerDeshum=360000;} // ouverture 15 sec
+    if (coeffD > 3)                   {timerDeshum=480000;}
+
+    activeDeshum();
+    
+    Serial.print("------------------desu----------");
+    Serial.print("temps");Serial.print(timerDeshum);
+
+    delay(timerDeshum);
+    desactiveDeshum();  
+  }
+}
+
 void gestionDeltaAirPositif(unsigned long duree){
   digitalWrite (pinFerme,LOW);
   digitalWrite (pinOuvert,LOW);
@@ -347,6 +263,109 @@ void gestionDeltaAirNegatif(unsigned long duree){
 
   dureeAction = duree;
 }
+
+void gestionHumidite(){
+// calcul moyenne du lot Sec
+  float temperatureSecP = 0;
+  float lotTempSec = 0;
+
+  // calcul moyenne sec
+  float totalTempSec = 0;
+  float compteurSec = 0;
+
+  // calcul moyenne du lot Hum  
+  float temperatureHumP = 0;
+  float lotTempHum = 0;
+
+  // calcul moyenne hum
+  float totalTempHum = 0;
+  float compteurHum = 0;
+
+  unsigned long debutMesure = millis();
+
+  bool continuerMesure = true;
+
+  activeVentilo();
+
+  while(continuerMesure){
+    // ---------------------------------------------------------------- //
+    // Partie temperature sec
+    int nbMesure = 0;
+
+    // calcul lot de temperature sec
+    while(nbMesure < 20){
+      temperatureSecP = getTemperature(A1);
+
+      if(temperatureSecP > 10 && temperatureSecP < 30){
+        lotTempSec += temperatureSecP;
+        nbMesure++;
+      }
+    }
+
+    // total temperature sec
+    totalTempSec += lotTempSec / nbMesure;
+    compteurSec++; // nombre de valeur de tempSec ajouter
+
+    lotTempSec = 0;
+
+    // ---------------------------------------------------------------- //
+    // Partie temperature humide
+    if(millis() - debutMesure > timerHum){ // commence au bout de 1m30
+      nbMesure = 0;
+
+      // calcul lot de temperature hum
+      while(nbMesure < 20){
+        temperatureHumP = getTemperature(A2);  // acquisition de la température hum
+
+        if(temperatureHumP > 10 && temperatureHumP < 30){
+          lotTempHum += temperatureHumP;
+          nbMesure++;
+        }
+      }
+      
+      // total temperature hum
+      totalTempHum += lotTempHum / nbMesure;
+      compteurHum++;
+
+      lotTempHum=0;
+    }
+    
+    delay(1000);
+
+    if(millis() - debutMesure > timerMesure){
+      continuerMesure = false;
+    }
+  }
+    
+  desactiveVentilo();
+}
+
+ 
+double calculHumidite(){
+  moySec = totalTempSec / compteurSec; // Valeur moyenne
+  moySec += etalonageSec;
+  
+  moyHum = totalTempHum / compteurHum; // Valeur moyenne
+  moyHum += etalonageHum;
+    
+  Serial.print("Temperature Seche"); Serial.println(moySec);
+  Serial.print("Temperature Humide"); Serial.println(moyHum);
+
+  tauxHumidite = 0;
+      
+  float pressionSaturanteHum = 0;
+  float pressionSaturanteSec = 0;
+
+  pressionSaturanteHum = calculPression(moyHum);
+  pressionSaturanteSec = calculPression(moySec);
+
+  double PW = 0;
+
+  PW = pressionSaturanteHum - 1013 * 0.000662 * (moySec - moyHum);
+
+  return PW/pressionSaturanteSec * 100;
+}
+
 
 StaticJsonDocument<capacity> generateJSON()
 {
@@ -446,12 +465,19 @@ float calculPression(float temp){
 void activeVentilo(){
   int etatRelayVentilo = digitalRead(pinVentilo);
 
-  if(etatRelayVentilo == LOW){
-    digitalWrite(pinVentilo, HIGH);
-  }
-  else{
+  while(etatRelayVentilo == HIGH){
     digitalWrite(pinVentilo, LOW);
+    delay(5000);
   }
+}
+
+void desactiveVentilo(){
+  int etatRelayVentilo = digitalRead(pinVentilo);
+
+  while(etatRelayVentilo == LOW){
+    digitalWrite(pinVentilo , HIGH);
+    delay(5000);
+  }    
 }
 
 void periodeBrume(){
