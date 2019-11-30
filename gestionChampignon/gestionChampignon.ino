@@ -10,8 +10,27 @@
 
 // Pin Relai pour ventilo Capteur
 #define pinVentilo 7
-#define desactiveVentilo() activeVentilo()
-#define desactiveDeshum() activeDeshum()
+
+// Protoype function
+void ioData();
+void cronTimer();
+void regulateurAir(float);
+void regulateurHumidite();
+void gestionDeltaAirPositif(unsigned long);
+void gestionDeltaAirNegatif(unsigned long);
+void gestionHumidite();
+double calculHumidite();
+float getTemperature(int);
+int calculMoySondeAna(int, int);
+float calculPression(float);
+void activeVentilo();
+void desactiveVentilo();
+void periodeBrume();
+void activeDeshum();
+void desactiveDeshum();
+void receiveData();
+void actionMot(String);
+String lireVoieSerie();
 
 //JSON
 const int capacity = JSON_OBJECT_SIZE(20); // capacité du JSON
@@ -138,6 +157,41 @@ void loop(){
   delay(dix);
 }  //fin de loop.
 
+StaticJsonDocument<capacity> generateJSON()
+{
+  document["temperatureAir"]=temperatureAir;
+  document["consigneAir"]=consigneAir;
+  document["modifConsigneAir"]=modifConsigneAir;
+  
+  document["tauxHumidite"]=tauxHumidite;
+  document["consigneHum"]=consigneHum;  
+  document["modifConsigneHum"]=modifConsigneHum;
+  
+  document["dureeAction"]=dureeAction;
+  document["coeff"]=deltaTemp;
+  document["etatVanneFroid"]=etatVanneFroid;
+  
+  document["moySec"]=moySec;
+  document["moyHum"]=moyHum;
+  
+  document["tempsDeshum"]=timerDeshum;
+  document["tempsOuvertureBrume"]=tempsOuvertureBrume;
+  document["tempsFermetureBrume"]=tempsFermetureBrume;
+  
+  document["nbJour"]=nbJour;
+  document["Millis"]=millis();
+  return document;
+}
+
+void envoieData(StaticJsonDocument<capacity> document){
+  Serial.print("DEBUT JSON");
+  delay(2000);
+  serializeJson(document, Serial);
+  delay(2000);
+  Serial.print("FIN JSON");
+  delay(2000);
+}
+
 void ioData(){
   document = generateJSON();
   receiveData();
@@ -154,7 +208,7 @@ void cronTimer(){
 
   if(millis() - intervalleJour > jour){
     nbJour++;
-    intervalleJour = milli();
+    intervalleJour = millis();
   }
 }
 
@@ -271,7 +325,7 @@ void gestionHumidite(){
 
   // calcul moyenne sec
   float totalTempSec = 0;
-  float compteurSec = 0;
+  int compteurSec = 0;
 
   // calcul moyenne du lot Hum  
   float temperatureHumP = 0;
@@ -279,7 +333,7 @@ void gestionHumidite(){
 
   // calcul moyenne hum
   float totalTempHum = 0;
-  float compteurHum = 0;
+  int compteurHum = 0;
 
   unsigned long debutMesure = millis();
 
@@ -338,10 +392,7 @@ void gestionHumidite(){
   }
     
   desactiveVentilo();
-}
 
- 
-double calculHumidite(){
   moySec = totalTempSec / compteurSec; // Valeur moyenne
   moySec += etalonageSec;
   
@@ -350,7 +401,10 @@ double calculHumidite(){
     
   Serial.print("Temperature Seche"); Serial.println(moySec);
   Serial.print("Temperature Humide"); Serial.println(moyHum);
+}
 
+ 
+double calculHumidite(){
   tauxHumidite = 0;
       
   float pressionSaturanteHum = 0;
@@ -365,33 +419,6 @@ double calculHumidite(){
 
   return PW/pressionSaturanteSec * 100;
 }
-
-
-StaticJsonDocument<capacity> generateJSON()
-{
-  document["temperatureAir"]=temperatureAir;
-  document["consigneAir"]=consigneAir;
-  document["modifConsigneAir"]=modifConsigneAir;
-  
-  document["tauxHumidite"]=tauxHumidite;
-  document["consigneHum"]=consigneHum;  
-  document["modifConsigneHum"]=modifConsigneHum;
-  
-  document["dureeAction"]=dureeAction;
-  document["coeff"]=deltaTemp;
-  document["etatVanneFroid"]=etatVanneFroid;
-  
-  document["moySec"]=moySec;
-  document["moyHum"]=moyHum;
-  
-  document["tempsDeshum"]=timerDeshum;
-  document["tempsOuvertureBrume"]=tempsOuvertureBrume;
-  document["tempsFermetureBrume"]=tempsFermetureBrume;
-  
-  document["nbJour"]=nbJour;
-  document["Millis"]=millis();
-  return document;
-} 
 
 float getTemperature(int pin){
   int temperatureP = 0;
@@ -498,14 +525,21 @@ void periodeBrume(){
 }
 
 void activeDeshum(){
-  int etatRelayVent = digitalRead(pinAir);
+  int etatRelayVentilo = digitalRead(pinAir);
 
-  if(etatRelayVent == LOW){
-    digitalWrite(pinAir, HIGH);
-  }
-  else{
-    digitalWrite(pinAir, LOW);
-  }
+  while(etatRelayVentilo == HIGH){
+    digitalWrite(pinAir , LOW);
+    delay(5000);
+  }    
+}
+
+void desactiveDeshum(){
+  int etatRelayVentilo = digitalRead(pinAir);
+
+  while(etatRelayVentilo == LOW){
+    digitalWrite(pinAir , HIGH);
+    delay(5000);
+  }    
 }
 
 void receiveData(void){
@@ -590,13 +624,4 @@ String lireVoieSerie(void)
     Serial.print(data);
 
     return data;
-}
-
-void envoieData(StaticJsonDocument<capacity> document){
-  Serial.print("DEBUT JSON");
-  delay(2000);
-  serializeJson(document, Serial);
-  delay(2000);
-  Serial.print("FIN JSON");
-  delay(2000);
 }
