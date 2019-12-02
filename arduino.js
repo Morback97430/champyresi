@@ -1,5 +1,17 @@
 let events = require('events');
 
+const path = require('path');
+const logDir = 'log';
+const filename = path.join(logDir, 'logArduino.json');
+
+const { createLogger, format, transports } = require('winston');
+const logger = createLogger({
+  level: 'info',
+  transports: [
+    new transports.File({filename})
+  ]
+});
+
 class Arduino{
     constructor(pSerialPort){
         this.serialPort = pSerialPort;
@@ -56,6 +68,8 @@ class Arduino{
                             try
                             {
                                 this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
+                                
+                                logger.info(this.jsonComplet);
                                 this.setJson(this.jsonComplet);
                             }catch(err)
                             {
