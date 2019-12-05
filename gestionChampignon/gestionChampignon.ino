@@ -495,6 +495,7 @@ void activeVentilo(){
   while(etatRelayVentilo == HIGH){
     digitalWrite(pinVentilo, LOW);
     delay(5000);
+    etatRelayVentilo = digitalRead(pinVentilo)
   }
 }
 
@@ -504,6 +505,7 @@ void desactiveVentilo(){
   while(etatRelayVentilo == LOW){
     digitalWrite(pinVentilo , HIGH);
     delay(5000);
+    etatRelayVentilo = digitalRead(pinVentilo)
   }    
 }
 
