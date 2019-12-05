@@ -5,12 +5,23 @@ const logDir = 'log';
 const filename = path.join(logDir, 'logArduino.json');
 
 const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, label, printf} = format;
+
+const myFormat = printf(({ level, label, message, timestamp }) => {
+    return `${timestamp} ${level} : ${label} => ${message}`;
+  });
+
 const logger = createLogger({
-  level: 'info',
-  transports: [
-    new transports.File({filename})
-  ]
+    format: combine(
+      timestamp(),
+      myFormat
+    ),
+    transports: [
+      new transports.File({filename})
+    ]
 });
+
+logger.exitOnError = false;
 
 class Arduino{
     constructor(pSerialPort){
@@ -68,9 +79,9 @@ class Arduino{
                             try
                             {
                                 this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
-                                
-                                logger.info(this.jsonComplet);
+
                                 this.setJson(this.jsonComplet);
+                                logger.info({label:"Arduino", message:this.jsonComplet});                                
                             }catch(err)
                             {
                                 this.eventEmitter.emit("erreur", err.message);
