@@ -1,5 +1,4 @@
 #include <ArduinoJson.h> 
-#include <Adafruit_MAX31865.h> 
 
 #define pinAir 6 // Déshumidifie
 #define pinEau 31 // humidifie
@@ -495,7 +494,7 @@ void activeVentilo(){
   while(etatRelayVentilo == HIGH){
     digitalWrite(pinVentilo, LOW);
     delay(5000);
-    etatRelayVentilo = digitalRead(pinVentilo)
+    etatRelayVentilo = digitalRead(pinVentilo);
   }
 }
 
@@ -505,7 +504,7 @@ void desactiveVentilo(){
   while(etatRelayVentilo == LOW){
     digitalWrite(pinVentilo , HIGH);
     delay(5000);
-    etatRelayVentilo = digitalRead(pinVentilo)
+    etatRelayVentilo = digitalRead(pinVentilo);
   }    
 }
 
@@ -532,7 +531,7 @@ void activeDeshum(){
   while(etatRelayDeshum == HIGH){
     digitalWrite(pinAir , LOW);
     delay(5000);
-    etatRelayDeshum = digitalRead(pinAir)
+    etatRelayDeshum = digitalRead(pinAir);
   }    
 }
 
@@ -542,7 +541,7 @@ void desactiveDeshum(){
   while(etatRelayDeshum == LOW){
     digitalWrite(pinAir , HIGH);
     delay(5000);
-    etatRelayDeshum = digitalRead(pinAir)
+    etatRelayDeshum = digitalRead(pinAir);
   }    
 }
 
