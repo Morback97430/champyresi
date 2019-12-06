@@ -420,9 +420,9 @@ double calculHumidite(){
 }
 
 float getTemperature(int pin){
-  int temperatureP = 0;
-  int temperature = 0;
-  int moyenne = 0;
+  float temperatureP = 0;
+  float temperature = 0;
+  float moyenne = 0;
 
   for(int i=0; i<31; i++){
       temperatureP = analogRead(pin); 
@@ -526,22 +526,22 @@ void periodeBrume(){
 }
 
 void activeDeshum(){
-  int etatRelayVentilo = digitalRead(pinAir);
+  int etatRelayDeshum = digitalRead(pinAir);
 
-  while(etatRelayVentilo == HIGH){
+  while(etatRelayDeshum == HIGH){
     digitalWrite(pinAir , LOW);
     delay(5000);
-    etatRelayVentilo = digitalRead(pinAir);
+    etatRelayDeshum = digitalRead(pinAir);
   }    
 }
 
 void desactiveDeshum(){
-  int etatRelayVentilo = digitalRead(pinAir);
+  int etatRelayDeshum = digitalRead(pinAir);
 
-  while(etatRelayVentilo == LOW){
+  while(etatRelayDeshum == LOW){
     digitalWrite(pinAir , HIGH);
     delay(5000);
-    etatRelayVentilo = digitalRead(pinAir);
+    etatRelayDeshum = digitalRead(pinAir);
   }    
 }
 
