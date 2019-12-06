@@ -532,6 +532,7 @@ void activeDeshum(){
   while(etatRelayVentilo == HIGH){
     digitalWrite(pinAir , LOW);
     delay(5000);
+    etatRelayVentilo = digitalRead(pinAir)
   }    
 }
 
@@ -541,6 +542,7 @@ void desactiveDeshum(){
   while(etatRelayVentilo == LOW){
     digitalWrite(pinAir , HIGH);
     delay(5000);
+    etatRelayVentilo = digitalRead(pinAir)
   }    
 }
 
