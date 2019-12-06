@@ -21,7 +21,7 @@ class Client{
                     .then((etatPort) => {
                         if(this.eventArduino == null){
                             this.eventArduino = etatPort;
-                            
+                        
                             this.eventArduino.on('connectPort', (etatPort) => {
                                 socket.emit('connectPort', false);
                                 socket.emit('erreur', "Port fermer, choissisez un port");
@@ -44,6 +44,10 @@ class Client{
                         socket.emit('erreur', err);
                     });
                 //setTimeout(()=>console.log(port.isOpen),5000);
+            });
+
+            socket.on('saveJour', (nbJour) => {
+                this.arduino.envoieJour(nbJour);
             });
         }
     }

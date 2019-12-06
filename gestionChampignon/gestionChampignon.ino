@@ -548,6 +548,19 @@ void receiveData(void){
 void actionMot(String mot){
   String data = "";
 
+  if(mot.equals("jour")){
+    while(Serial.available() == 0){
+      true;
+    }
+
+    data = lireVoieSerie();
+    deserializeJson(document, data.toCharArray();
+
+    nbJour = document["nbJour"].as<int>();
+
+    actionMot();
+  }
+
   if(mot.equals("modifAir")){
     while(Serial.available() == 0){
       true;

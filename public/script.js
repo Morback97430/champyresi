@@ -60,6 +60,15 @@ function bindEvent(){
         $('#choixPort').prop('disabled', true);
         socket.emit('choixPort', $('#listPort').val());
     });
+
+    $('.gestionJour').click(() => {
+        let jour = parseInt($('#saisiJour').val(), 10);
+
+        if(jour != "" && Number.isInteger(jour)){
+            $('.nbJour').text(jour);
+            socket.emit('saveJour', jour);
+        }
+    }); 
 }
 
 function setAppChampi(data){
