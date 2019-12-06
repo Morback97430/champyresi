@@ -554,11 +554,14 @@ void actionMot(String mot){
     }
 
     data = lireVoieSerie();
-    deserializeJson(document, data.toCharArray();
+    char dataTab[200];
+    data.toCharArray(dataTab, 200);
+
+    deserializeJson(document, dataTab);
 
     nbJour = document["nbJour"].as<int>();
 
-    actionMot();
+    mot = lireVoieSerie();
   }
 
   if(mot.equals("modifAir")){
