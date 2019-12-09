@@ -4,8 +4,20 @@ const path = require('path');
 const logDir = 'log';
 const filename = path.join(logDir, 'logArduino.json');
 
-const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, label, printf} = format;
+const winston = require('winston');
+const { createLogger, format} = {...winston};
+const { combine, timestamp, printf} = format;
+
+require('winston-daily-rotate-file');
+
+let transport = new winston.transports.DailyRotateFile(
+    {
+        filename: path.join('log', 'logArduino-%DATE%.log'),
+        datePattern: 'DD-MM-YYYY',
+        maxSize:'2g',
+        maxFiles:'3',
+    }
+);
 
 const myFormat = printf(({ level, label, message, timestamp }) => {
     return `${timestamp} ${level} : ${label} => ${message}`;
@@ -17,7 +29,7 @@ const logger = createLogger({
       myFormat
     ),
     transports: [
-      new transports.File({filename})
+        transport
     ]
 });
 
