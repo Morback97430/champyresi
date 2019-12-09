@@ -100,6 +100,15 @@ class Arduino{
     isOpen(){
         return this.port != null ? this.port.isOpen : false;
     }
+
+    envoieJour(nbJour){
+        this.writeJson({nbJour:nbJour});
+    }
+
+    writeJson(data){
+        this.port.write("jour");
+        this.port.write(JSON.stringify(data));
+    }
 }
 
 module.exports = Arduino;
