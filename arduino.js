@@ -1,6 +1,6 @@
 let events = require('events');
 
-let logger = require("./logger");
+let loggerArduino = require("./logger").loggerArduino;
 
 class Arduino{
     constructor(pSerialPort){
@@ -15,8 +15,8 @@ class Arduino{
     }
 
     setJson(pJson){
-        // TODO sauvegarde dans fichier avant remplacement
-        this.json = pJson;
+       loggerArduino.info({label:"Arduino", message:this.jsonComplet});
+       this.json = pJson;
     }
 
     getJson(){
@@ -24,7 +24,6 @@ class Arduino{
     }
 
     listPort(){
-        // TODO utiliser err
         return this.serialPort.list();
     }
 
@@ -59,8 +58,7 @@ class Arduino{
                             {
                                 this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
 
-                                this.setJson(this.jsonComplet);
-                                logger.info({label:"Arduino", message:this.jsonComplet});                                
+                                this.setJson(this.jsonComplet);                                
                             }catch(err)
                             {
                                 this.eventEmitter.emit("erreur", err.message);
@@ -76,9 +74,7 @@ class Arduino{
                         {
                             this.enregistreJson = true;
                         }
-                        
 
-                        
                         this.eventEmitter.emit('dataJson', data);
                     });
                     resolve(this.eventEmitter);

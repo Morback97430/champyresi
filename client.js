@@ -1,3 +1,5 @@
+let loggerErreur = require("./logger").loggerErreur;
+
 class Client{
     constructor(pArduino){
         this.arduino = pArduino;
@@ -11,8 +13,12 @@ class Client{
         }else{
             socket.on('reqListPort', () => {
                 this.arduino.listPort()
-                    .then((ports) => {
-                        socket.emit('listPortName', ports.map(value => value.comName));
+                    .then((ports, err) => {
+                        if(!err){
+                            socket.emit('listPortName', ports.map(value => value.comName));
+                        }else{
+                            loggerErreur.error({label:"Liste Port", message:err});
+                        }
                 });
             });           
             
@@ -33,6 +39,7 @@ class Client{
                             });
 
                             this.eventArduino.on('erreur', (err) => {
+                                loggerErreur.error({label:"Port on erreur", message:err});
                                 socket.emit('erreur', err);
                             });
 
@@ -41,6 +48,7 @@ class Client{
                     })
                     .catch((err) => {
                         socket.emit("connectPort", false);
+                        loggerErreur.error({label:"Port ", message:err});
                         socket.emit('erreur', err);
                     });
                 //setTimeout(()=>console.log(port.isOpen),5000);
