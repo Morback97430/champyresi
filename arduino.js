@@ -1,39 +1,6 @@
 let events = require('events');
 
-const path = require('path');
-const logDir = 'log';
-const filename = path.join(logDir, 'logArduino.json');
-
-const winston = require('winston');
-const { createLogger, format} = {...winston};
-const { combine, timestamp, printf} = format;
-
-require('winston-daily-rotate-file');
-
-let transport = new winston.transports.DailyRotateFile(
-    {
-        filename: path.join('log', 'logArduino-%DATE%.log'),
-        datePattern: 'DD-MM-YYYY',
-        maxSize:'2g',
-        maxFiles:'3',
-    }
-);
-
-const myFormat = printf(({ level, label, message, timestamp }) => {
-    return `${timestamp} ${level} : ${label} => ${message}`;
-  });
-
-const logger = createLogger({
-    format: combine(
-      timestamp(),
-      myFormat
-    ),
-    transports: [
-        transport
-    ]
-});
-
-logger.exitOnError = false;
+let loggerArduino = require("./logger").loggerArduino;
 
 class Arduino{
     constructor(pSerialPort){
@@ -48,8 +15,8 @@ class Arduino{
     }
 
     setJson(pJson){
-        // TODO sauvegarde dans fichier avant remplacement
-        this.json = pJson;
+       loggerArduino.info({label:"Arduino", message:this.jsonComplet});
+       this.json = pJson;
     }
 
     getJson(){
@@ -57,7 +24,6 @@ class Arduino{
     }
 
     listPort(){
-        // TODO utiliser err
         return this.serialPort.list();
     }
 
@@ -92,8 +58,7 @@ class Arduino{
                             {
                                 this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
 
-                                this.setJson(this.jsonComplet);
-                                logger.info({label:"Arduino", message:this.jsonComplet});                                
+                                this.setJson(this.jsonComplet);                                
                             }catch(err)
                             {
                                 this.eventEmitter.emit("erreur", err.message);
@@ -109,9 +74,7 @@ class Arduino{
                         {
                             this.enregistreJson = true;
                         }
-                        
 
-                        
                         this.eventEmitter.emit('dataJson', data);
                     });
                     resolve(this.eventEmitter);
