@@ -66,6 +66,8 @@ double tauxHumidite = 0;
 
 unsigned long intervalle = millis();// tout les 12H
 unsigned long intervalleJour = millis();
+unsigned long intervalleActivation = millis();
+
 float debutTabTemp = 10;
 float finTabTemp = 35;
 
@@ -74,7 +76,7 @@ unsigned long tempsFermetureBrume = 0;
 int nbJour = 1;
 
 unsigned long dureeAction = 0; 
-
+unsigned long dureeActivationBrume = 60000;
 unsigned long timerDeshum = 0;
 
 
@@ -124,37 +126,46 @@ void loop(){
 
   cronTimer();
 
-  Serial.print("consigne  Air : "); Serial.println(consigneAir);
+  gestionTemperature();
 
-  // reglage du Temperature Air
-  temperatureAir = 0;
-  temperatureAir = getTemperature(A0);
+  if(nbJour > 5){
 
-  if(temperatureAir > 10 && temperatureAir < 30){
-    temperatureAir = temperatureAir + etalonageAir;
-    Serial.print("Temperature Air        "); Serial.println(temperatureAir);
-    
-    deltaTemp = temperatureAir - consigneAir;
-    dureeAction = 0;
+    // init moySec et moyHum
+    gestionHumidite();
+    Serial.println("Fin des Releve");
 
-    regulateurAir(deltaTemp);  
+    tauxHumidite =  calculHumidite();
+    Serial.print("tauxHumidite"); Serial.println(tauxHumidite);  
+      
+    regulateurHumidite();
+  }else{
+    if(millis() - intervalleActivation > dureeActivationBrume){
+      periodeBrume();
+      intervalleActivation = millis();
+    }
   }
 
-
-  moySec = 0;
-  moyHum = 0;
-  // init moySec et moyHum
-  gestionHumidite();
-  Serial.println("Fin des Releve");
-
-  tauxHumidite =  calculHumidite();
-  Serial.print("tauxHumidite"); Serial.println(tauxHumidite);  
-    
-  regulateurHumidite();
-      
   // Timer entre les mesures
   delay(dix);
 }  //fin de loop.
+
+void gestionTemperature(){
+    Serial.print("consigne  Air : "); Serial.println(consigneAir);
+
+    // reglage du Temperature Air
+    temperatureAir = 0;
+    temperatureAir = getTemperature(A0);
+
+    if(temperatureAir > 10 && temperatureAir < 30){
+      temperatureAir = temperatureAir + etalonageAir;
+      Serial.print("Temperature Air        "); Serial.println(temperatureAir);
+      
+      deltaTemp = temperatureAir - consigneAir;
+      dureeAction = 0;
+
+      regulateurAir(deltaTemp);  
+    }
+}
 
 StaticJsonDocument<capacity> generateJSON()
 {
@@ -333,6 +344,9 @@ void gestionHumidite(){
   unsigned long debutMesure = millis();
 
   bool continuerMesure = true;
+
+  moySec = 0;
+  moyHum = 0;
 
   activeVentilo();
 
@@ -562,6 +576,20 @@ void actionMot(String mot){
     nbJour = document["nbJour"].as<int>();
 
     mot = lireVoieSerie();
+  }
+
+  if(mot.equals("dureeActivation")){
+    while(Serial.available() == 0){
+      true;
+    }
+
+    data = lireVoieSerie();
+    char dataTab[200];
+    data.toCharArray(dataTab, 200);
+
+    deserializeJson(document, dataTab);
+
+    // todo
   }
 
   if(mot.equals("modifAir")){

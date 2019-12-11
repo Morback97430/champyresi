@@ -124,12 +124,12 @@ class Arduino{
         return this.port != null ? this.port.isOpen : false;
     }
 
-    envoieJour(nbJour){
-        this.writeJson({nbJour:nbJour});
+    envoieData(label, data){
+        this.writeJson(label, data);
     }
 
-    writeJson(data){
-        this.port.write("jour");
+    writeJson(label, data){
+        this.port.write(label);
         this.port.write(JSON.stringify(data));
     }
 }

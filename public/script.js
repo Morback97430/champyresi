@@ -68,7 +68,28 @@ function bindEvent(){
             $('.nbJour').text(jour);
             socket.emit('saveJour', jour);
         }
-    }); 
+    });
+
+    $('#dureeActivation').keyup(() => {      
+        let nbActivation = calculActivation($('#dureeActivation').val());
+        $('#nbActivation').val(nbActivation);
+    });
+
+    $('#nbActivation').keyup(() => {
+        let dureeActivation = calculActivation($('#nbActivation').val());
+        $('#dureeActivation').val(dureeActivation);
+    });  
+
+    $('.gestionActivationBrume').click(() => {
+        $('.nbActivation5J').text($('#nbActivation').val());
+        $('.dureeActivation5J').text($('#dureeActivation').val());
+
+        socket.emit('dureeActivation', $('.dureeActivation5J').text());
+    });
+}
+
+function calculActivation(nb){
+    return 1440 / nb;
 }
 
 function setAppChampi(data){

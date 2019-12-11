@@ -47,7 +47,11 @@ class Client{
             });
 
             socket.on('saveJour', (nbJour) => {
-                this.arduino.envoieJour(nbJour);
+                this.arduino.envoieData("jour", {nbJour:nbJour});
+            });
+
+            socket.on('dureeActivation', (dureeActivation) => {
+                this.arduino.envoieData("dureeActivation", {dureeActivation:dureeActivation});
             });
         }
     }
