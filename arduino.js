@@ -1,39 +1,6 @@
 let events = require('events');
 
-const path = require('path');
-const logDir = 'log';
-const filename = path.join(logDir, 'logArduino.json');
-
-const winston = require('winston');
-const { createLogger, format} = {...winston};
-const { combine, timestamp, printf} = format;
-
-require('winston-daily-rotate-file');
-
-let transport = new winston.transports.DailyRotateFile(
-    {
-        filename: path.join('log', 'logArduino-%DATE%.log'),
-        datePattern: 'DD-MM-YYYY',
-        maxSize:'2g',
-        maxFiles:'3',
-    }
-);
-
-const myFormat = printf(({ level, label, message, timestamp }) => {
-    return `${timestamp} ${level} : ${label} => ${message}`;
-  });
-
-const logger = createLogger({
-    format: combine(
-      timestamp(),
-      myFormat
-    ),
-    transports: [
-        transport
-    ]
-});
-
-logger.exitOnError = false;
+let logger = require("./logger");
 
 class Arduino{
     constructor(pSerialPort){
