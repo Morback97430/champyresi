@@ -94,10 +94,10 @@ float tabPressionSaturante [251] = {
 };
 
 // CONSTANTE DUREE
-unsigned long tempsOuvertureBrume = 15000; // 15 secondes
-unsigned long timerHum            = 90000; // 1 minute 30
-unsigned long timerMesure         = 180000; // 3 minutes
-unsigned long dix                 = 600000; // 10 minutes
+unsigned long tempsOuvertureBrume = 2000; // 15 secondes
+unsigned long timerHum            = 2000; // 1 minute 30
+unsigned long timerMesure         = 2000; // 3 minutes
+unsigned long dix                 = 2000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
@@ -187,6 +187,7 @@ StaticJsonDocument<capacity> generateJSON()
   document["tempsDeshum"]=timerDeshum;
   document["tempsOuvertureBrume"]=tempsOuvertureBrume;
   document["tempsFermetureBrume"]=tempsFermetureBrume;
+  document["dureeActivationBrume"]=dureeActivationBrume;
   
   document["nbJour"]=nbJour;
   document["Millis"]=millis();
@@ -205,6 +206,7 @@ void envoieData(StaticJsonDocument<capacity> document){
 void ioData(){
   document = generateJSON();
   receiveData();
+  delay(2000);
   envoieData(document);
 }
 
@@ -562,23 +564,25 @@ void receiveData(void){
 void actionMot(String mot){
   String data = "";
 
-  if(mot.equals("jour")){
+  if(mot.indexOf("jour") >= 0){
     while(Serial.available() == 0){
       true;
     }
 
     data = lireVoieSerie();
+
     char dataTab[200];
     data.toCharArray(dataTab, 200);
 
-    deserializeJson(document, dataTab);
+    StaticJsonDocument<capacity> docJour;
+    deserializeJson(docJour, dataTab);
 
-    nbJour = document["nbJour"].as<int>();
+    nbJour = docJour["nbJour"].as<int>();
 
     mot = lireVoieSerie();
   }
 
-  if(mot.equals("dureeActivation")){
+  if(mot.indexOf("dureeActivation") >= 0){
     while(Serial.available() == 0){
       true;
     }
@@ -587,9 +591,12 @@ void actionMot(String mot){
     char dataTab[200];
     data.toCharArray(dataTab, 200);
 
-    deserializeJson(document, dataTab);
+    StaticJsonDocument<capacity> docDureeActivation;
+    deserializeJson(docDureeActivation, dataTab);
 
-    // todo
+    dureeActivationBrume = docDureeActivation["dureeActivation"].as<long>();
+
+    mot = lireVoieSerie();
   }
 
   if(mot.equals("modifAir")){
@@ -664,7 +671,6 @@ String lireVoieSerie(void)
     }
     // on supprime le caractère '\n'
     // et on le remplace par celui de fin de chaine '\0'
-    Serial.print(data);
 
     return data;
 }
