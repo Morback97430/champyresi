@@ -187,6 +187,7 @@ StaticJsonDocument<capacity> generateJSON()
   document["tempsDeshum"]=timerDeshum;
   document["tempsOuvertureBrume"]=tempsOuvertureBrume;
   document["tempsFermetureBrume"]=tempsFermetureBrume;
+  document["dureeActivationBrume"]=dureeActivationBrume;
   
   document["nbJour"]=nbJour;
   document["Millis"]=millis();
