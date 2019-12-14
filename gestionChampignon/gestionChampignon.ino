@@ -206,6 +206,7 @@ void envoieData(StaticJsonDocument<capacity> document){
 void ioData(){
   document = generateJSON();
   receiveData();
+  delay(2000);
   envoieData(document);
 }
 
@@ -563,23 +564,25 @@ void receiveData(void){
 void actionMot(String mot){
   String data = "";
 
-  if(mot.equals("jour")){
+  if(mot.indexOf("jour") >= 0){
     while(Serial.available() == 0){
       true;
     }
 
     data = lireVoieSerie();
+
     char dataTab[200];
     data.toCharArray(dataTab, 200);
 
-    deserializeJson(document, dataTab);
+    StaticJsonDocument<capacity> docJour;
+    deserializeJson(docJour, dataTab);
 
-    nbJour = document["nbJour"].as<int>();
+    nbJour = docJour["nbJour"].as<int>();
 
     mot = lireVoieSerie();
   }
 
-  if(mot.equals("dureeActivation")){
+  if(mot.indexOf("dureeActivation") >= 0){
     while(Serial.available() == 0){
       true;
     }
@@ -588,9 +591,10 @@ void actionMot(String mot){
     char dataTab[200];
     data.toCharArray(dataTab, 200);
 
-    deserializeJson(document, dataTab);
+    StaticJsonDocument<capacity> docDureeActivation;
+    deserializeJson(docDureeActivation, dataTab);
 
-    dureeActivationBrume = document["dureeActivation"].as<long>();
+    dureeActivationBrume = docDureeActivation["dureeActivation"].as<long>();
 
     mot = lireVoieSerie();
   }
@@ -667,7 +671,6 @@ String lireVoieSerie(void)
     }
     // on supprime le caractère '\n'
     // et on le remplace par celui de fin de chaine '\0'
-    Serial.print(data);
 
     return data;
 }
