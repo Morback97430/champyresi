@@ -585,8 +585,8 @@ void actionMot(String mot){
     }
 
     data = lireVoieSerie();
-    char dataTab2[200];
-    data.toCharArray(dataTab2, 200);
+    char dataTab[200];
+    data.toCharArray(dataTab, 200);
 
     deserializeJson(document, dataTab);
 
