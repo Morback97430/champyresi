@@ -589,7 +589,9 @@ void actionMot(String mot){
 
     deserializeJson(document, dataTab);
 
-    // todo
+    dureeActivationBrume = document["dureeActivation"].as<long>();
+
+    mot = lireVoieSerie();
   }
 
   if(mot.equals("modifAir")){
