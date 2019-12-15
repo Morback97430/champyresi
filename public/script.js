@@ -56,9 +56,11 @@ function closeAccessApp(){
 
 function bindEvent(){
     $('#choixPort').click(() => {
-        // TODO controle val choixPort
-        $('#choixPort').prop('disabled', true);
         socket.emit('choixPort', $('#listPort').val());
+    });
+    $('#envoyer').click(()=>{
+        let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
+        socket.emit('newConsigne',envoie); 
     });
     $('#envoyer').click(()=>{
         let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
