@@ -80,10 +80,8 @@ class Client{
                 {
                     envoie.modifConsigneHum = null;
                 }
-                process.stdin.emit('data', (envoie)=>{
-                    console.log(envoie);
-                    port.write(envoie);
-                });
+                
+                console.log(envoie);
             });
         }
     }
