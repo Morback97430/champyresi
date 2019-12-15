@@ -93,6 +93,7 @@ class Arduino{
 
     writeJson(label, data){
         this.port.write(label + "\n");
+        console.log(JSON.stringify(data));
         this.port.write(JSON.stringify(data) + "\n");
     }
 }

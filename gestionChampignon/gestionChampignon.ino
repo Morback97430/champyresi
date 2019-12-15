@@ -599,51 +599,68 @@ void actionMot(String mot){
     mot = lireVoieSerie();
   }
 
-  if(mot.equals("modifAir")){
-    while(Serial.available() == 0){
-      true;
-    }
+  if(mot.indexOf("modifAir")>= 0){
+      while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataTab[200];
+      data.toCharArray(dataTab, 200);
+      StaticJsonDocument<capacity> docModifAir;
+      deserializeJson(docModifAir, dataTab);
 
-    data = lireVoieSerie();
-    consigneAir = data.toFloat();
+      consigneAir = docModifAir["consigneAir"].as<int>();
 
-    mot = lireVoieSerie();
-  }
-
-  if(mot.equals("modifHum")){
-    while(Serial.available() == 0){
-      true;
-    }
-
-    data = lireVoieSerie();
-    consigneHum = data.toFloat();
-
-    mot = lireVoieSerie();
-  }
-
-  if(mot.equals("modifFacteurAir")){
-    while(Serial.available() == 0){
-      true;
-    }
-    
-    data = lireVoieSerie();
-    modifConsigneAir = data.toFloat();
-
-    mot = lireVoieSerie();
+      mot = lireVoieSerie();
   }
 
   
-  if(mot.equals("modifFacteurHum")){
-    while(Serial.available() == 0){
-      true;
-    }
-    
-    data = lireVoieSerie();
-    modifConsigneHum = data.toFloat();
+  if(mot.indexOf("modifHum")>= 0){
+      while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataTab[200];
+      data.toCharArray(dataTab, 200);
+      StaticJsonDocument<capacity> docModifHum;
+      deserializeJson(docModifHum, dataTab);
 
-    mot = lireVoieSerie();
+      consigneHum = docModifHum["consigneHum"].as<float>();
+
+      mot = lireVoieSerie();
   }
+    
+    if(mot.indexOf("modifFacteurAir")>= 0){
+      while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataTab[200];
+      data.toCharArray(dataTab, 200);
+      StaticJsonDocument<capacity> docModifFacteurAir;
+      deserializeJson(docModifFacteurAir, dataTab);
+
+      docMot = gestionJson(data);
+
+      modifConsigneAir = docMot["modifConsigneAir"].as<float>();
+
+      mot = lireVoieSerie();
+    }  
   
+    if(mot.indexOf("modifFacteurHum")>= 0){
+      while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataTab[200];
+      data.toCharArray(dataTab, 200);
+      StaticJsonDocument<capacity> docModifFacteurHum;
+      deserializeJson(docModifFacteurHum, dataTab);
+
+      modifConsigneHum = docModifFacteurHum["modifConsigneHum"].as<float>();
+
+      mot = lireVoieSerie();
+    }
 }
 
 String lireVoieSerie(void)

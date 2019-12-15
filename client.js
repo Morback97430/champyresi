@@ -64,21 +64,25 @@ class Client{
 
             socket.on("newConsigne",(envoie) =>
             {
-                if (envoie.consigneAir != parseInt(envoie.consigneAir))
+                envoie.consigneAir.replace(",",".");
+                envoie.consigneHum.replace(",",".");
+                envoie.modifConsigneAir.replace(",",".");
+                envoie.modifConsigneHum.replace(",",".");
+                if (envoie.consigneAir == parseFloat(envoie.consigneAir))
                 {
-                    envoie.consigneAir = null;
+                    this.arduino.envoieData("modifAir",{consigneAir:envoie.consigneAir});
                 }
-                if (envoie.consigneHum != parseInt(envoie.consigneHum))
+                if (envoie.consigneHum == parseFloat(envoie.consigneHum))
                 {
-                    envoie.consigneHum = null;
+                    this.arduino.envoieData("modifHum",{consigneHum:envoie.consigneHum});
                 }
-                if (envoie.modifConsigneAir != parseInt(envoie.modifConsigneAir))
+                if (envoie.modifConsigneAir == parseFloat(envoie.modifConsigneAir))
                 {
-                    envoie.modifConsigneAir = null;
+                    this.arduino.envoieData("modifFacteurAir",{modifConsigneAir:envoie.modifConsigneAir});
                 }
-                if (envoie.modifConsigneHum != parseInt(envoie.modifConsigneHum))
+                if (envoie.modifConsigneHum == parseFloat(envoie.modifConsigneHum))
                 {
-                    envoie.modifConsigneHum = null;
+                    this.arduino.envoieData("modifFacteurHum",{modifConsigneHum:envoie.modifConsigneHum});
                 }
                 
                 console.log(envoie);

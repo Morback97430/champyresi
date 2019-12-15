@@ -60,11 +60,8 @@ function bindEvent(){
     });
     $('#envoyer').click(()=>{
         let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
-        socket.emit('newConsigne',envoie); 
-    });
-    $('#envoyer').click(()=>{
-        let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
-        socket.emit('newConsigne',envoie); 
+        socket.emit('newConsigne',envoie);
+        initConsigne();
     });
 
     $('.gestionJour').click(() => {
@@ -112,4 +109,12 @@ function setAppChampi(data){
     $('.tempsOuvertureBrume').text(data.tempsOuvertureBrume);
     $('.tempsFermetureBrume').text(data.tempsFermetureBrume);
     $('.nbJour').text(data.nbJour);
+}
+
+function initConsigne()
+{
+    $('#consigneAir').val("");
+    $('#consigneHum').val("");
+    $('#modifConsigneAir').val("");
+    $('#modifConsigneHum').val("");   
 }
