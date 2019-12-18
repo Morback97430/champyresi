@@ -94,10 +94,10 @@ float tabPressionSaturante [251] = {
 };
 
 // CONSTANTE DUREE
-unsigned long tempsOuvertureBrume = 2000; // 15 secondes
-unsigned long timerHum            = 2000; // 1 minute 30
-unsigned long timerMesure         = 2000; // 3 minutes
-unsigned long dix                 = 2000; // 10 minutes
+unsigned long tempsOuvertureBrume = 15000; // 15 secondes
+unsigned long timerHum            = 90000; // 1 minute 30
+unsigned long timerMesure         = 180000; // 3 minutes
+unsigned long dix                 = 600000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
@@ -640,9 +640,7 @@ void actionMot(String mot){
       StaticJsonDocument<capacity> docModifFacteurAir;
       deserializeJson(docModifFacteurAir, dataTab);
 
-      docMot = gestionJson(data);
-
-      modifConsigneAir = docMot["modifConsigneAir"].as<float>();
+      modifConsigneAir = docModifFacteurAir["modifConsigneAir"].as<float>();
 
       mot = lireVoieSerie();
     }  

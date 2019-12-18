@@ -68,6 +68,7 @@ class Client{
                 envoie.consigneHum.replace(",",".");
                 envoie.modifConsigneAir.replace(",",".");
                 envoie.modifConsigneHum.replace(",",".");
+                
                 if (envoie.consigneAir == parseFloat(envoie.consigneAir))
                 {
                     this.arduino.envoieData("modifAir",{consigneAir:envoie.consigneAir});
@@ -84,8 +85,6 @@ class Client{
                 {
                     this.arduino.envoieData("modifFacteurHum",{modifConsigneHum:envoie.modifConsigneHum});
                 }
-                
-                console.log(envoie);
             });
         }
     }
