@@ -8,14 +8,16 @@ class Arduino{
         this.json = "noJson";
 
         this.enregistreJson = false;
-        this.jsonComplet = "";
+        this.jsonComplet = ""; // Stock l'enregistrement du json envoyer depuis Arduino
+
+        this.modifParametre = [];
 
         this.port = null;
         this.eventEmitter = new events.EventEmitter();
     }
 
     setJson(pJson){
-       loggerArduino.info({label:"Arduino", message:this.jsonComplet});
+       loggerArduino.info({label:"Arduino", message:pJson, modifParametre:this.modifParametre});
        this.json = pJson;
     }
 
@@ -89,6 +91,7 @@ class Arduino{
 
     envoieData(label, data){
         this.writeJson(label, data);
+        this.modifParametre.push([label, JSON.stringify(data)]);
     }
 
     writeJson(label, data){

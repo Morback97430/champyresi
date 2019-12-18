@@ -43,8 +43,8 @@ let transportArduino = new winston.transports.DailyRotateFile(
     }
 );
 
-const formatArduino = printf(({ level, label, message, timestamp }) => {
-    return `${timestamp} ${level} : ${label} => ${message}`;
+const formatArduino = printf(({level, label, message, modifParametre, timestamp }) => {
+    return `${timestamp} ${level} : ${label} => #${message} / Valeur Manuelle modifier #[${modifParametre}]`;
   });
 
 const loggerArduino = createLogger({
