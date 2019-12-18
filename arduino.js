@@ -76,8 +76,6 @@ class Arduino{
                         {
                             this.enregistreJson = true;
                         }
-
-                        this.eventEmitter.emit('dataJson', data);
                     });
                     resolve(this.eventEmitter);
                 }
