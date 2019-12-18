@@ -56,9 +56,12 @@ function closeAccessApp(){
 
 function bindEvent(){
     $('#choixPort').click(() => {
-        // TODO controle val choixPort
-        $('#choixPort').prop('disabled', true);
         socket.emit('choixPort', $('#listPort').val());
+    });
+    $('#envoyer').click(()=>{
+        let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
+        socket.emit('newConsigne',envoie);
+        initConsigne();
     });
 
     $('.gestionJour').click(() => {
@@ -106,4 +109,12 @@ function setAppChampi(data){
     $('.tempsOuvertureBrume').text(data.tempsOuvertureBrume);
     $('.tempsFermetureBrume').text(data.tempsFermetureBrume);
     $('.nbJour').text(data.nbJour);
+}
+
+function initConsigne()
+{
+    $('#consigneAir').val("");
+    $('#consigneHum').val("");
+    $('#modifConsigneAir').val("");
+    $('#modifConsigneHum').val("");   
 }
