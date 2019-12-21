@@ -1,6 +1,7 @@
 let events = require('events');
 
 let loggerArduino = require("./logger").loggerArduino;
+let loggerInfo = require("./logger").loggerInfo;
 
 class Arduino{
     constructor(pSerialPort){
@@ -88,13 +89,15 @@ class Arduino{
     }
 
     envoieData(label, data){
-        this.writeJson(label, data);
-        this.modifParametre.push([label, JSON.stringify(data)]);
-    }
-
-    writeJson(label, data){
+        let dataJson = JSON.stringify(data);
+        loggerInfo.info({
+            label:"Changement Consigne",
+            message:label + " " + dataJson
+        });
+        this.modifParametre.push([label, dataJson]);
+        
         this.port.write(label + "\n");
-        this.port.write(JSON.stringify(data) + "\n");
+        this.port.write(dataJson + "\n");
     }
 }
 
