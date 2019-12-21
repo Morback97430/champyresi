@@ -571,15 +571,15 @@ void actionMot(String mot){
 
     data = lireVoieSerie();
 
-    char dataTab[200];
-    data.toCharArray(dataTab, 200);
+    char dataJour[200];
+    data.toCharArray(dataJour, 200);
 
     StaticJsonDocument<capacity> docJour;
-    deserializeJson(docJour, dataTab);
+    deserializeJson(docJour, dataJour);
 
     nbJour = docJour["nbJour"].as<int>();
 
-    mot = lireVoieSerie();
+    actionMot(lireVoieSerie());
   }
 
   if(mot.indexOf("dureeActivation") >= 0){
@@ -588,77 +588,76 @@ void actionMot(String mot){
     }
 
     data = lireVoieSerie();
-    char dataTab[200];
-    data.toCharArray(dataTab, 200);
+    char dataDureeActivation[200];
+    data.toCharArray(dataDureeActivation, 200);
 
     StaticJsonDocument<capacity> docDureeActivation;
-    deserializeJson(docDureeActivation, dataTab);
+    deserializeJson(docDureeActivation, dataDureeActivation);
 
     dureeActivationBrume = docDureeActivation["dureeActivation"].as<long>();
 
-    mot = lireVoieSerie();
+    actionMot(lireVoieSerie());
   }
 
-  if(mot.indexOf("modifAir")>= 0){
+  if(mot.indexOf("modifAir") >= 0){
       while(Serial.available() == 0){
         true;
       }
       data = lireVoieSerie();
-      char dataTab[200];
-      data.toCharArray(dataTab, 200);
+      char dataModifAir[200];
+      data.toCharArray(dataModifAir, 200);
       StaticJsonDocument<capacity> docModifAir;
-      deserializeJson(docModifAir, dataTab);
+      deserializeJson(docModifAir, dataModifAir);
 
       consigneAir = docModifAir["consigneAir"].as<int>();
-
-      mot = lireVoieSerie();
+  
+      actionMot(lireVoieSerie());
   }
 
-  
-  if(mot.indexOf("modifHum")>= 0){
-      while(Serial.available() == 0){
-        true;
-      }
-      data = lireVoieSerie();
-      char dataTab[200];
-      data.toCharArray(dataTab, 200);
-      StaticJsonDocument<capacity> docModifHum;
-      deserializeJson(docModifHum, dataTab);
-
-      consigneHum = docModifHum["consigneHum"].as<float>();
-
-      mot = lireVoieSerie();
-  }
-    
-    if(mot.indexOf("modifFacteurAir")>= 0){
-      while(Serial.available() == 0){
-        true;
-      }
-      data = lireVoieSerie();
-      char dataTab[200];
-      data.toCharArray(dataTab, 200);
-      StaticJsonDocument<capacity> docModifFacteurAir;
-      deserializeJson(docModifFacteurAir, dataTab);
-
-      modifConsigneAir = docModifFacteurAir["modifConsigneAir"].as<float>();
-
-      mot = lireVoieSerie();
-    }  
-  
-    if(mot.indexOf("modifFacteurHum")>= 0){
-      while(Serial.available() == 0){
-        true;
-      }
-      data = lireVoieSerie();
-      char dataTab[200];
-      data.toCharArray(dataTab, 200);
-      StaticJsonDocument<capacity> docModifFacteurHum;
-      deserializeJson(docModifFacteurHum, dataTab);
-
-      modifConsigneHum = docModifFacteurHum["modifConsigneHum"].as<float>();
-
-      mot = lireVoieSerie();
+  if(mot.indexOf("modifHum") >= 0){
+    while(Serial.available() == 0){
+      true;
     }
+    data = lireVoieSerie();
+    char dataModifHum[200];
+    data.toCharArray(dataModifHum, 200);
+    StaticJsonDocument<capacity> docModifHum;
+    deserializeJson(docModifHum, dataModifHum);
+
+    consigneHum = docModifHum["consigneHum"].as<float>();
+
+    actionMot(lireVoieSerie());
+  }
+  
+  if(mot.indexOf("modifFacteurAir") >= 0){
+    while(Serial.available() == 0){
+      true;
+    }
+    data = lireVoieSerie();
+    char dataModifFacteurAir[200];
+    data.toCharArray(dataModifFacteurAir, 200);
+    StaticJsonDocument<capacity> docModifFacteurAir;
+    deserializeJson(docModifFacteurAir, dataModifFacteurAir);
+
+    modifConsigneAir = docModifFacteurAir["modifConsigneAir"].as<float>();
+
+    actionMot(lireVoieSerie());
+  }  
+
+  if(mot.indexOf("modifFacteurHum") >= 0){
+    while(Serial.available() == 0){
+      true;
+    }
+    data = lireVoieSerie();
+    char dataModifFacteurHum[200];
+    data.toCharArray(dataModifFacteurHum, 200);
+    StaticJsonDocument<capacity> docModifFacteurHum;
+    deserializeJson(docModifFacteurHum, dataModifFacteurHum);
+
+    modifConsigneHum = docModifFacteurHum["modifConsigneHum"].as<float>();
+
+    actionMot(lireVoieSerie());
+  }
 }
 
 String lireVoieSerie(void)
