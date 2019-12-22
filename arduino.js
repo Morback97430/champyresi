@@ -32,7 +32,7 @@ class Arduino{
 
     connect(choixPort){
         if(this.port == null){
-            this.port = new this.serialPort(choixPort,{baudRate:9600,autoOpen:false});
+            this.port = new this.serialPort(choixPort,{baudRate:9600,autoOpen:false,});
             this.port.on('close', () => {
                 this.eventEmitter.emit('connectPort', false);
                 this.port = null;
@@ -96,7 +96,7 @@ class Arduino{
         });
         this.modifParametre.push([label, dataJson]);
         
-        this.port.write(label + "\n");
+        this.port.write(label + "\n",);
         this.port.write(dataJson + "\n");
     }
 }
