@@ -94,10 +94,10 @@ float tabPressionSaturante [251] = {
 };
 
 // CONSTANTE DUREE
-unsigned long tempsOuvertureBrume = 15000; // 15 secondes
-unsigned long timerHum            = 90000; // 1 minute 30
-unsigned long timerMesure         = 180000; // 3 minutes
-unsigned long dix                 = 600000; // 10 minutes
+unsigned long tempsOuvertureBrume = 10000; // 15 secondes
+unsigned long timerHum            = 10000; // 1 minute 30
+unsigned long timerMesure         = 10000; // 3 minutes
+unsigned long dix                 = 10000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
@@ -564,7 +564,7 @@ void receiveData(void){
 void actionMot(String mot){
   String data = "";
 
-  if(mot.indexOf("jour") >= 0){
+  if(mot.indexOf("J") >= 0){
     while(Serial.available() == 0){
       true;
     }
@@ -577,12 +577,12 @@ void actionMot(String mot){
     StaticJsonDocument<capacity> docJour;
     deserializeJson(docJour, dataJour);
 
-    nbJour = docJour["nbJour"].as<int>();
+    nbJour = docJour["nBJ"].as<int>();
 
-    actionMot(lireVoieSerie());
+    mot = lireVoieSerie();
   }
 
-  if(mot.indexOf("dureeActivation") >= 0){
+  if(mot.indexOf("dA") >= 0){
     while(Serial.available() == 0){
       true;
     }
@@ -594,12 +594,12 @@ void actionMot(String mot){
     StaticJsonDocument<capacity> docDureeActivation;
     deserializeJson(docDureeActivation, dataDureeActivation);
 
-    dureeActivationBrume = docDureeActivation["dureeActivation"].as<long>();
+    dureeActivationBrume = docDureeActivation["dA"].as<long>();
 
-    actionMot(lireVoieSerie());
+    mot = lireVoieSerie();
   }
 
-  if(mot.indexOf("modifAir") >= 0){
+  if(mot.indexOf("mA")>= 0){
       while(Serial.available() == 0){
         true;
       }
@@ -609,55 +609,56 @@ void actionMot(String mot){
       StaticJsonDocument<capacity> docModifAir;
       deserializeJson(docModifAir, dataModifAir);
 
-      consigneAir = docModifAir["consigneAir"].as<int>();
+      consigneAir = docModifAir["cA"].as<int>();
+
+      mot = lireVoieSerie();
+  }
+
   
-      actionMot(lireVoieSerie());
+  if(mot.indexOf("mH")>= 0){
+      while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataModifHum[200];
+      data.toCharArray(dataModifHum, 200);
+      StaticJsonDocument<capacity> docModifHum;
+      deserializeJson(docModifHum, dataModifHum);
+
+      consigneHum = docModifHum["cH"].as<float>();
+
+      mot = lireVoieSerie();
   }
+    
+    if(mot.indexOf("mFA")>= 0){
+      while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char datamodifFacteurAir[200];
+      data.toCharArray(datamodifFacteurAir, 200);
+      StaticJsonDocument<capacity> docModifFacteurAir;
+      deserializeJson(docModifFacteurAir, datamodifFacteurAir);
 
-  if(mot.indexOf("modifHum") >= 0){
-    while(Serial.available() == 0){
-      true;
-    }
-    data = lireVoieSerie();
-    char dataModifHum[200];
-    data.toCharArray(dataModifHum, 200);
-    StaticJsonDocument<capacity> docModifHum;
-    deserializeJson(docModifHum, dataModifHum);
+      modifConsigneAir = docModifFacteurAir["cFA"].as<float>();
 
-    consigneHum = docModifHum["consigneHum"].as<float>();
-
-    actionMot(lireVoieSerie());
-  }
+      mot = lireVoieSerie();
+    }  
   
-  if(mot.indexOf("modifFacteurAir") >= 0){
-    while(Serial.available() == 0){
-      true;
+    if(mot.indexOf("mFH")>= 0){
+      while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char datamodifFacteurHum[200];
+      data.toCharArray(datamodifFacteurHum, 200);
+      StaticJsonDocument<capacity> docModifFacteurHum;
+      deserializeJson(docModifFacteurHum, datamodifFacteurHum);
+
+      modifConsigneHum = docModifFacteurHum["cFH"].as<float>();
+
+      mot = lireVoieSerie();
     }
-    data = lireVoieSerie();
-    char dataModifFacteurAir[200];
-    data.toCharArray(dataModifFacteurAir, 200);
-    StaticJsonDocument<capacity> docModifFacteurAir;
-    deserializeJson(docModifFacteurAir, dataModifFacteurAir);
-
-    modifConsigneAir = docModifFacteurAir["modifConsigneAir"].as<float>();
-
-    actionMot(lireVoieSerie());
-  }  
-
-  if(mot.indexOf("modifFacteurHum") >= 0){
-    while(Serial.available() == 0){
-      true;
-    }
-    data = lireVoieSerie();
-    char dataModifFacteurHum[200];
-    data.toCharArray(dataModifFacteurHum, 200);
-    StaticJsonDocument<capacity> docModifFacteurHum;
-    deserializeJson(docModifFacteurHum, dataModifFacteurHum);
-
-    modifConsigneHum = docModifFacteurHum["modifConsigneHum"].as<float>();
-
-    actionMot(lireVoieSerie());
-  }
 }
 
 String lireVoieSerie(void)
@@ -676,6 +677,7 @@ String lireVoieSerie(void)
         if((int)lettre != 10){
           data += lettre;
         }else{
+          Serial.println(data);
           return data;
         }
         // laisse un peu de temps entre chaque accès a la mémoire
