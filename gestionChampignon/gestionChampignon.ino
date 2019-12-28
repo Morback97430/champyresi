@@ -95,10 +95,10 @@ float tabPressionSaturante [251] = {
 };
 
 // CONSTANTE DUREE
-unsigned long tempsOuvertureBrume = 10000; // 15 secondes
-unsigned long timerHum            = 10000; // 1 minute 30
-unsigned long timerMesure         = 10000; // 3 minutes
-unsigned long dix                 = 10000; // 10 minutes
+unsigned long tempsOuvertureBrume = 15000; // 15 secondes
+unsigned long timerHum            = 90000; // 1 minute 30
+unsigned long timerMesure         = 180000; // 3 minutes
+unsigned long dix                 = 600000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
@@ -588,7 +588,7 @@ void actionMot(String mot){
 
     nbJour = docJour["nBJ"].as<int>();
 
-    mot = lireVoieSerie();
+    actionMot(lireVoieSerie());
   }
 
   if(mot.indexOf("dA") >= 0){
@@ -605,7 +605,7 @@ void actionMot(String mot){
 
     dureeActivationBrume = docDureeActivation["dA"].as<long>();
 
-    mot = lireVoieSerie();
+    actionMot(lireVoieSerie());
   }
 
   if(mot.indexOf("mA")>= 0){
@@ -620,7 +620,7 @@ void actionMot(String mot){
 
       consigneAir = docModifAir["cA"].as<int>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
   }
 
   
@@ -636,7 +636,7 @@ void actionMot(String mot){
 
       consigneHum = docModifHum["cH"].as<float>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
   }
     
     if(mot.indexOf("mFA")>= 0){
@@ -651,7 +651,7 @@ void actionMot(String mot){
 
       modifConsigneAir = docModifFacteurAir["cFA"].as<float>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
     }  
   
     if(mot.indexOf("mFH")>= 0){
@@ -666,7 +666,7 @@ void actionMot(String mot){
 
       modifConsigneHum = docModifFacteurHum["cFH"].as<float>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
     }
 }
 
@@ -686,7 +686,6 @@ String lireVoieSerie(void)
         if((int)lettre != 10){
           data += lettre;
         }else{
-          Serial.println(data);
           return data;
         }
         // laisse un peu de temps entre chaque accès a la mémoire
