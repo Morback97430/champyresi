@@ -30,6 +30,7 @@ void desactiveDeshum();
 void receiveData();
 void actionMot(String);
 String lireVoieSerie();
+void delayAS(unsigned long);
 
 //JSON
 const int capacity = JSON_OBJECT_SIZE(20); // capacité du JSON
@@ -149,6 +150,14 @@ void loop(){
   delay(dix);
 }  //fin de loop.
 
+void delayAS(unsigned long dureeTimer){
+  unsigned long timerMesure = millis();
+
+  while(millis() - timerMesure > dureeTimer){
+    ioData();
+  }
+}
+
 void gestionTemperature(){
     Serial.print("consigne  Air : "); Serial.println(consigneAir);
 
@@ -196,17 +205,17 @@ StaticJsonDocument<capacity> generateJSON()
 
 void envoieData(StaticJsonDocument<capacity> document){
   Serial.print("DEBUT JSON");
-  delay(2000);
+  delayAS(2000);
   serializeJson(document, Serial);
-  delay(2000);
+  delayAS(2000);
   Serial.print("FIN JSON");
-  delay(2000);
+  delayAS(2000);
 }
 
 void ioData(){
   document = generateJSON();
   receiveData();
-  delay(2000);
+  delayAS(2000);
   envoieData(document);
 }
 
@@ -274,7 +283,7 @@ void regulateurHumidite(){
   if(tauxHumidite < consigneHum){
     coeffH = consigneHum - tauxHumidite;
     if (coeffH<0.3){
-      delay(780000);
+      delayAS(780000);
     }
     if (coeffH > 0.3 && coeffH < 1) {tempsFermetureBrume = 105000;} // ouverture 2 sec    
     if (coeffH > 1 && coeffH < 2)   {tempsFermetureBrume = 60000;} // ouverture 5 sec 
@@ -299,7 +308,7 @@ void regulateurHumidite(){
     Serial.print("------------------desu----------");
     Serial.print("temps");Serial.print(timerDeshum);
 
-    delay(timerDeshum);
+    delayAS(timerDeshum);
     desactiveDeshum();  
   }
 }
@@ -307,7 +316,7 @@ void regulateurHumidite(){
 void gestionDeltaAirPositif(unsigned long duree){
   digitalWrite (pinFerme,LOW);
   digitalWrite (pinOuvert,LOW);
-  delay(duree);  
+  delayAS(duree);  
   digitalWrite (pinFerme,HIGH); 
   digitalWrite (pinOuvert,HIGH); 
   Serial.print("vanne ouvert"); Serial.println(duree / 1000); Serial.println("sec  ");  
@@ -318,7 +327,7 @@ void gestionDeltaAirPositif(unsigned long duree){
 
 void gestionDeltaAirNegatif(unsigned long duree){
   digitalWrite (pinFerme,LOW);
-  delay (duree); 
+  delayAS (duree); 
   digitalWrite (pinFerme,HIGH);
   Serial.print("vanne ferme"); Serial.println(duree / 1000); Serial.println("sec  ");
   etatVanneFroid -= duree / 1000;
@@ -395,7 +404,7 @@ void gestionHumidite(){
       lotTempHum=0;
     }
     
-    delay(1000);
+    delayAS(1000);
 
     if(millis() - debutMesure > timerMesure){
       continuerMesure = false;
@@ -445,7 +454,7 @@ float getTemperature(int pin){
       }
 
       // recupére la veleur
-      delay(250);
+      delayAS(250);
     }
 
 
@@ -505,7 +514,7 @@ void activeVentilo(){
 
   while(etatRelayVentilo == HIGH){
     digitalWrite(pinVentilo, LOW);
-    delay(5000);
+    delayAS(5000);
     etatRelayVentilo = digitalRead(pinVentilo);
   }
 }
@@ -515,7 +524,7 @@ void desactiveVentilo(){
 
   while(etatRelayVentilo == LOW){
     digitalWrite(pinVentilo , HIGH);
-    delay(5000);
+    delayAS(5000);
     etatRelayVentilo = digitalRead(pinVentilo);
   }    
 }
@@ -527,9 +536,9 @@ void periodeBrume(){
   
   while(continuerMesurebrume){
     digitalWrite(pinEau, LOW); // allume
-    delay(tempsOuvertureBrume); // 15sec
+    delayAS(tempsOuvertureBrume); // 15sec
     digitalWrite(pinEau, HIGH); // eteint
-    delay(tempsFermetureBrume); // 3min
+    delayAS(tempsFermetureBrume); // 3min
 
     if(millis() - debutbrume > dix){
       continuerMesurebrume = false;
@@ -542,7 +551,7 @@ void activeDeshum(){
 
   while(etatRelayDeshum == HIGH){
     digitalWrite(pinAir , LOW);
-    delay(5000);
+    delayAS(5000);
     etatRelayDeshum = digitalRead(pinAir);
   }    
 }
@@ -552,7 +561,7 @@ void desactiveDeshum(){
 
   while(etatRelayDeshum == LOW){
     digitalWrite(pinAir , HIGH);
-    delay(5000);
+    delayAS(5000);
     etatRelayDeshum = digitalRead(pinAir);
   }    
 }
@@ -679,7 +688,7 @@ String lireVoieSerie(void)
           return data;
         }
         // laisse un peu de temps entre chaque accès a la mémoire
-        delay(10);
+        delayAS(10);
         // on passe à l'indice suivant
         i++;
     }
