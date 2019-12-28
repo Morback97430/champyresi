@@ -95,10 +95,10 @@ float tabPressionSaturante [251] = {
 };
 
 // CONSTANTE DUREE
-unsigned long tempsOuvertureBrume = 15000; // 15 secondes
-unsigned long timerHum            = 90000; // 1 minute 30
-unsigned long timerMesure         = 180000; // 3 minutes
-unsigned long dix                 = 600000; // 10 minutes
+unsigned long tempsOuvertureBrume = 10000; // 15 secondes
+unsigned long timerHum            = 10000; // 1 minute 30
+unsigned long timerMesure         = 10000; // 3 minutes
+unsigned long dix                 = 10000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
