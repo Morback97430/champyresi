@@ -153,7 +153,8 @@ void loop(){
 void delayAS(unsigned long dureeTimer){
   unsigned long timerMesure = millis();
 
-  while(millis() - timerMesure > dureeTimer){
+  while(millis() - timerMesure <= dureeTimer){
+    delay(200);
     ioData();
   }
 }
@@ -205,17 +206,15 @@ StaticJsonDocument<capacity> generateJSON()
 
 void envoieData(StaticJsonDocument<capacity> document){
   Serial.print("DEBUT JSON");
-  delayAS(2000);
+  delay(200);
   serializeJson(document, Serial);
-  delayAS(2000);
+  delay(200);
   Serial.print("FIN JSON");
-  delayAS(2000);
 }
-
 void ioData(){
   document = generateJSON();
   receiveData();
-  delayAS(2000);
+  delay(200);
   envoieData(document);
 }
 
@@ -689,7 +688,7 @@ String lireVoieSerie(void)
           return data;
         }
         // laisse un peu de temps entre chaque accès a la mémoire
-        delayAS(10);
+        delay(10);
         // on passe à l'indice suivant
         i++;
     }
