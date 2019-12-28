@@ -86,6 +86,34 @@ class Client{
                     this.arduino.envoieData("mFH",{cFH:envoie.modifConsigneHum});
                 }
             });
+
+            socket.on("newConsigneAir", (consigneAir) => {
+                consigneAir.replace(",",".");
+                if(consigneAir == parseFloat(consigneAir)){
+                    this.arduino.envoieData("ma", {cA:consigneAir});
+                }
+            });
+
+            socket.on("newConsigneHum", (consigneHum) => {
+                consigneHum.replace(",",".");
+                if(consigneHum == parseFloat(consigneHum)){
+                    this.arduino.envoieData("mH",{cH:consigneHum});
+                }
+            });
+
+            socket.on("newModifAir", (modifAir) => {
+                modifAir.replace(",",".");
+                if(modifAir == parseFloat(modifAir)){
+                    this.arduino.envoieData("mFA",{cFA:modifAir});
+                }
+            });
+        
+            socket.on("newModifHum", (modifHum) => {
+                modifHum.replace(",", ".");
+                if(modifHum == parseFloat(modifHum)){
+                    this.arduino.envoieData("mFH",{cFH:modifHum});
+                }
+            });
         }
     }
 }

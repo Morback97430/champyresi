@@ -58,9 +58,24 @@ function bindEvent(){
     $('#choixPort').click(() => {
         socket.emit('choixPort', $('#listPort').val());
     });
-    $('#envoyer').click(()=>{
-        let envoie = new EnvoieData($('#consigneAir').val(),$('#consigneHum').val(),$('#modifConsigneAir').val(),$('#modifConsigneHum').val());
-        socket.emit('newConsigne',envoie);
+
+    $('#envoyerConsigneAir').click(()=>{
+        socket.emit('newConsigneAir', $('#consigneAir').val());
+        initConsigne();
+    });
+
+    $('#envoyerConsigneHum').click(()=>{
+        socket.emit('newConsigneHum', $('#consigneHum').val());
+        initConsigne();
+    });
+
+    $('#envoyerModifAir').click(()=>{
+        socket.emit('newModifAir', $('#modifConsigneAir').val());
+        initConsigne();
+    });
+     
+    $('#envoyerModifHum').click(()=>{
+        socket.emit('newModifHum', $('#modifConsigneHum').val());
         initConsigne();
     });
 
