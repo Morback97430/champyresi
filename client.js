@@ -55,11 +55,11 @@ class Client{
             });
 
             socket.on('saveJour', (nbJour) => {
-                this.arduino.envoieData("jour", {nbJour:nbJour});
+                this.arduino.envoieData("J", {nBJ:nbJour});
             });
 
             socket.on('dureeActivation', (dureeActivation) => {
-                this.arduino.envoieData("dureeActivation", {dureeActivation:dureeActivation});
+                this.arduino.envoieData("dA", {dA:dureeActivation});
             });
 
             socket.on("newConsigne",(envoie) =>
@@ -71,19 +71,19 @@ class Client{
                 
                 if (envoie.consigneAir == parseFloat(envoie.consigneAir))
                 {
-                    this.arduino.envoieData("modifAir",{consigneAir:envoie.consigneAir});
+                    this.arduino.envoieData("mA",{cA:envoie.consigneAir});
                 }
                 if (envoie.consigneHum == parseFloat(envoie.consigneHum))
                 {
-                    this.arduino.envoieData("modifHum",{consigneHum:envoie.consigneHum});
+                    this.arduino.envoieData("mH",{cH:envoie.consigneHum});
                 }
                 if (envoie.modifConsigneAir == parseFloat(envoie.modifConsigneAir))
                 {
-                    this.arduino.envoieData("modifFacteurAir",{modifConsigneAir:envoie.modifConsigneAir});
+                    this.arduino.envoieData("mFA",{cFA:envoie.modifConsigneAir});
                 }
                 if (envoie.modifConsigneHum == parseFloat(envoie.modifConsigneHum))
                 {
-                    this.arduino.envoieData("modifFacteurHum",{modifConsigneHum:envoie.modifConsigneHum});
+                    this.arduino.envoieData("mFH",{cFH:envoie.modifConsigneHum});
                 }
             });
         }
