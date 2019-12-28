@@ -147,7 +147,7 @@ void loop(){
   }
 
   // Timer entre les mesures
-  delay(dix);
+  delayAS(dix);
 }  //fin de loop.
 
 void delayAS(unsigned long dureeTimer){
