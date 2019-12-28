@@ -588,7 +588,7 @@ void actionMot(String mot){
 
     nbJour = docJour["nBJ"].as<int>();
 
-    mot = lireVoieSerie();
+    actionMot(lireVoieSerie());
   }
 
   if(mot.indexOf("dA") >= 0){
@@ -605,7 +605,7 @@ void actionMot(String mot){
 
     dureeActivationBrume = docDureeActivation["dA"].as<long>();
 
-    mot = lireVoieSerie();
+    actionMot(lireVoieSerie());
   }
 
   if(mot.indexOf("mA")>= 0){
@@ -620,7 +620,7 @@ void actionMot(String mot){
 
       consigneAir = docModifAir["cA"].as<int>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
   }
 
   
@@ -636,7 +636,7 @@ void actionMot(String mot){
 
       consigneHum = docModifHum["cH"].as<float>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
   }
     
     if(mot.indexOf("mFA")>= 0){
@@ -651,7 +651,7 @@ void actionMot(String mot){
 
       modifConsigneAir = docModifFacteurAir["cFA"].as<float>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
     }  
   
     if(mot.indexOf("mFH")>= 0){
@@ -666,7 +666,7 @@ void actionMot(String mot){
 
       modifConsigneHum = docModifFacteurHum["cFH"].as<float>();
 
-      mot = lireVoieSerie();
+      actionMot(lireVoieSerie());
     }
 }
 
@@ -686,7 +686,6 @@ String lireVoieSerie(void)
         if((int)lettre != 10){
           data += lettre;
         }else{
-          Serial.println(data);
           return data;
         }
         // laisse un peu de temps entre chaque accès a la mémoire
