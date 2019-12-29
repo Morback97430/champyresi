@@ -12,8 +12,7 @@ let transportInfo = new winston.transports.DailyRotateFile(
         level:"info",
         filename: path.join('log/serveur', 'logInfo-%DATE%.log'),
         datePattern: 'DD-MM-YYYY',
-        maxSize:'20m',
-        maxFiles:'3',
+        maxFiles:'40',
     }
 );
 
@@ -36,10 +35,10 @@ loggerInfo.exitOnError = false;
 // Arduino
 let transportArduino = new winston.transports.DailyRotateFile(
     {
-        filename: path.join('log/arduino', 'logArduino-%DATE%.log'),
-        datePattern: 'DD-MM-YYYY',
-        maxSize:'2g',
-        maxFiles:'3',
+        filename: path.join('log/arduino', 'logArduino'),
+        extension:".log",
+        maxSize:'200m',
+        maxFiles:'30',
     }
 );
 
@@ -65,8 +64,7 @@ let transportErreur = new winston.transports.DailyRotateFile(
         level:"error",
         filename: path.join('log/serveur', 'logErreur-%DATE%.log'),
         datePattern: 'DD-MM-YYYY',
-        maxSize:'20m',
-        maxFiles:'3',
+        maxFiles:'40',
     }
 );
 
