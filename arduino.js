@@ -2,6 +2,7 @@ let events = require('events');
 
 let loggerArduino = require("./logger").loggerArduino;
 let loggerInfo = require("./logger").loggerInfo;
+let loggerErreur = require("./logger").loggerErreur;
 
 class Arduino{
     constructor(pSerialPort){
@@ -64,7 +65,8 @@ class Arduino{
                                 this.setJson(this.jsonComplet);                                
                             }catch(err)
                             {
-                                this.eventEmitter.emit("erreur", err.message);
+                                loggerErreur.error({label:"Json Parse onData", message: this.jsonComplet});
+                                //this.eventEmitter.emit("erreur", err.message);
                             }
                             this.jsonComplet = "";
                         }
