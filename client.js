@@ -62,35 +62,10 @@ class Client{
                 this.arduino.envoieData("dA", {dA:dureeActivation});
             });
 
-            socket.on("newConsigne",(envoie) =>
-            {
-                envoie.consigneAir.replace(",",".");
-                envoie.consigneHum.replace(",",".");
-                envoie.modifConsigneAir.replace(",",".");
-                envoie.modifConsigneHum.replace(",",".");
-                
-                if (envoie.consigneAir == parseFloat(envoie.consigneAir))
-                {
-                    this.arduino.envoieData("mA",{cA:envoie.consigneAir});
-                }
-                if (envoie.consigneHum == parseFloat(envoie.consigneHum))
-                {
-                    this.arduino.envoieData("mH",{cH:envoie.consigneHum});
-                }
-                if (envoie.modifConsigneAir == parseFloat(envoie.modifConsigneAir))
-                {
-                    this.arduino.envoieData("mFA",{cFA:envoie.modifConsigneAir});
-                }
-                if (envoie.modifConsigneHum == parseFloat(envoie.modifConsigneHum))
-                {
-                    this.arduino.envoieData("mFH",{cFH:envoie.modifConsigneHum});
-                }
-            });
-
             socket.on("newConsigneAir", (consigneAir) => {
                 consigneAir.replace(",",".");
                 if(consigneAir == parseFloat(consigneAir)){
-                    this.arduino.envoieData("ma", {cA:consigneAir});
+                    this.arduino.envoieData("mA", {cA:consigneAir});
                 }
             });
 
