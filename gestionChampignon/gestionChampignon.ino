@@ -617,7 +617,7 @@ void actionMot(String mot){
       StaticJsonDocument<capacity> docModifAir;
       deserializeJson(docModifAir, dataModifAir);
 
-      consigneAir = docModifAir["cA"].as<int>();
+      consigneAir = docModifAir["cA"].as<float>();
 
       actionMot(lireVoieSerie());
   }
