@@ -205,11 +205,12 @@ StaticJsonDocument<capacity> generateJSON()
 }
 
 void envoieData(StaticJsonDocument<capacity> document){
-  Serial.print("DEBUT JSON");
+  Serial.println("DEBUT JSON");
   delay(200);
   serializeJson(document, Serial);
+  Serial.println("");
   delay(200);
-  Serial.print("FIN JSON");
+  Serial.println("FIN JSON");
 }
 void ioData(){
   document = generateJSON();
