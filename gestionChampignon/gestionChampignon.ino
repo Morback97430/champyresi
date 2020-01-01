@@ -363,48 +363,28 @@ void gestionHumidite(){
 
   while(continuerMesure){
     // ---------------------------------------------------------------- //
-    // Partie temperature sec
-    int nbMesure = 0;
-
+    // Partie temperature sec  
     // calcul lot de temperature sec
-    while(nbMesure < 20){
-      temperatureSecP = getTemperature(A1);
-
-      if(temperatureSecP > 10 && temperatureSecP < 30){
-        lotTempSec += temperatureSecP;
-        nbMesure++;
-      }
+    
+    temperatureSecP = getTemperature(A1);
+    if(temperatureSecP > 10 && temperatureSecP < 30){
+      // total temperature sec
+      totalTempSec += temperatureSecP;
+      compteurSec++; // nombre de valeur de tempSec ajouter
     }
-
-    // total temperature sec
-    totalTempSec += lotTempSec / nbMesure;
-    compteurSec++; // nombre de valeur de tempSec ajouter
-
-    lotTempSec = 0;
 
     // ---------------------------------------------------------------- //
     // Partie temperature humide
-    if(millis() - debutMesure > timerHum){ // commence au bout de 1m30
-      nbMesure = 0;
+    if(millis() - debutMesure > timerHum){ // commence au bout de 1m30 
+    // calcul lot de temperature hum
+      temperatureHumP = getTemperature(A2);  // acquisition de la température hum
 
-      // calcul lot de temperature hum
-      while(nbMesure < 20){
-        temperatureHumP = getTemperature(A2);  // acquisition de la température hum
-
-        if(temperatureHumP > 10 && temperatureHumP < 30){
-          lotTempHum += temperatureHumP;
-          nbMesure++;
-        }
+      if(temperatureHumP > 10 && temperatureHumP < 30){
+        // total temperature hum
+        totalTempHum +=  temperatureHumP;
+        compteurHum++;
       }
-      
-      // total temperature hum
-      totalTempHum += lotTempHum / nbMesure;
-      compteurHum++;
-
-      lotTempHum=0;
     }
-    
-    delayAS(1000);
 
     if(millis() - debutMesure > timerMesure){
       continuerMesure = false;
