@@ -23,5 +23,9 @@ app.use(
 );
 
 app.get('/',  (req, res) => {
-    res.render('./public/index.html');
+  res.render('./public/header.html', (err, html) => {
+    res.render('./public/header.html', (err, html) => {
+      res.send(html);
+    });
+  });
 });
