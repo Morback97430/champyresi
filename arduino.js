@@ -1,3 +1,5 @@
+let io = require('./serveur');
+
 let events = require('events');
 let Readline = require('@serialport/parser-readline');
 
@@ -9,7 +11,7 @@ let loggerErreur = require("./logger").loggerErreur;
 class Arduino{
     constructor(pSerialPort){
         this.serialPort = pSerialPort;
-        this.json = "noJson";
+        this.json = "";
 
         this.enregistreJson = false;
         this.jsonComplet = ""; // Stock l'enregistrement du json envoyer depuis Arduino
@@ -43,7 +45,7 @@ class Arduino{
 
             this.port.pipe(this.parser);
             this.port.on('close', () => {
-                this.eventEmitter.emit('connectPort', false);
+                io.emit('connectPort', false);
                 this.port = null;
             });
         }else if(!this.isOpen()){
@@ -66,7 +68,7 @@ class Arduino{
                             this.enregistreJson = false;
                             try
                             {
-                                this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
+                                io.emit("dataJson", JSON.parse(this.jsonComplet));
 
                                 this.setJson(this.jsonComplet);                                
                             }catch(err)
