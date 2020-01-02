@@ -198,6 +198,10 @@ StaticJsonDocument<capacity> generateJSON()
   document["tempsOuvertureBrume"]=tempsOuvertureBrume;
   document["tempsFermetureBrume"]=tempsFermetureBrume;
   document["dureeActivationBrume"]=dureeActivationBrume;
+
+  document["etalonageAir"] = etalonageAir;
+  document["etalonageHum"] = etalonageHum;
+  document["etalonageSec"] = etalonageSec;
   
   document["nbJour"]=nbJour;
   document["Millis"]=millis();
@@ -645,6 +649,51 @@ void actionMot(String mot){
       deserializeJson(docModifFacteurHum, datamodifFacteurHum);
 
       modifConsigneHum = docModifFacteurHum["cFH"].as<float>();
+
+      actionMot(lireVoieSerie());
+    }
+
+    if(mot.indexOf("eAir") >= 0){
+     while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataEtalonageAir[200];
+      data.toCharArray(dataEtalonageAir, 200);
+      StaticJsonDocument<capacity> docEtalonageAir;
+      deserializeJson(docEtalonageAir, dataEtalonageAir);
+
+      etalonageAir = docEtalonageAir["eAir"].as<float>();
+
+      actionMot(lireVoieSerie());
+    }
+
+    if(mot.indexOf("eSec") >= 0){
+     while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataEtalonageSec[200];
+      data.toCharArray(dataEtalonageSec, 200);
+      StaticJsonDocument<capacity> docEtalonageSec;
+      deserializeJson(docEtalonageSec, dataEtalonageSec);
+
+      etalonageSec = docEtalonageSec["eSec"].as<float>();
+
+      actionMot(lireVoieSerie());
+    }
+
+    if(mot.indexOf("eHum") >= 0){
+     while(Serial.available() == 0){
+        true;
+      }
+      data = lireVoieSerie();
+      char dataEtalonageHum[200];
+      data.toCharArray(dataEtalonageHum, 200);
+      StaticJsonDocument<capacity> docEtalonageHum;
+      deserializeJson(docEtalonageHum, dataEtalonageHum);
+
+      etalonageHum = docEtalonageHum["eHum"].as<float>();
 
       actionMot(lireVoieSerie());
     }

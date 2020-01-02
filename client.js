@@ -90,6 +90,23 @@ class Client{
                 this.arduino.envoieData("mFH",{cFH:modifHum});
             }
         });
+
+        socket.on("newEtalonageAir", (etalAir) => 
+        {
+            this.arduino.envoieData("eAir",{eAir:etalAir});
+        });
+
+        
+        socket.on("newEtalonageSec", (etalSec) => 
+        {
+            this.arduino.envoieData("eSec",{eSec:etalSec});
+        });
+
+        
+        socket.on("newEtalonageHum", (etalHum) => 
+        {
+            this.arduino.envoieData("eHum",{eHum:etalHum});
+        });
     }
 }
 
