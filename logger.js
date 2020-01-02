@@ -84,8 +84,12 @@ const loggerErreur = createLogger({
 
 loggerErreur.exitOnError = false;
 
+let logErreur = (label, message) => {
+  loggerErreur.error({label: label, message:message});
+}
+
 module.exports = {
-    loggerErreur:loggerErreur,
+    loggerErreur:logErreur,
     loggerArduino:loggerArduino,
     loggerInfo:loggerInfo
 };

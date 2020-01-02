@@ -51,7 +51,7 @@ class Client{
                 })
                 .catch((err) => {
                     io.emit("connectPort", false);
-                    loggerErreur.error({label:"Port ", message:err});
+                    loggerErreur("Port", err.message);
                     io.emit('erreur', err);
                 });
             //setTimeout(()=>console.log(port.isOpen),5000);
