@@ -60,7 +60,7 @@ class Arduino{
             this.port.open((err) => {
                 if(err){
                     this.port = null;
-                    reject(err.message);
+                    reject("Connection rate path(" + choixPort + ")");
                 }else{
                     // Plusieur rajout event 'data' ??
                     this.parser.on('data', (data) => {
