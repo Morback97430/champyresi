@@ -7,7 +7,8 @@ const server = app.listen(3000,() => {
   console.log('Example app listening on port 3000!');
 });
 
-const io = require('socket.io')(server);
+let io = require('socket.io')(server);
+module.exports = io;
 const serialPort = require('serialport');
 
 const Arduino = require('./arduino');
