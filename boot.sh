@@ -1,2 +1,2 @@
-cd /home/pi/Desktop/Champyresi
+cd /home/pi/Desktop/champyresi
 sudo npm start

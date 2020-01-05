@@ -20,7 +20,7 @@ class Client{
                     if(!err){
                         io.emit('listPortName', ports.map(value => value.comName));
                     }else{
-                        loggerErreur.error({label:"Liste Port", message:err});
+                        loggerErreur("Liste Port", err);
                     }
             });
         });           
