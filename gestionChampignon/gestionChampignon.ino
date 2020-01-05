@@ -37,15 +37,15 @@ const int capacity = JSON_OBJECT_SIZE(20); // capacité du JSON
 StaticJsonDocument<capacity> document;
 
 // etalonage
-float etalonageSec = 1.20;
-float etalonageHum = 0.43;
+float etalonageSec = 1;
+float etalonageHum = 1;
 float etalonageAir = 0.43;
 
 // Consigne
-float consigneHum = 95;
+float consigneHum = 86;
 float modifConsigneHum = 0.12;
 
-float consigneAir = 20.52;  //  20.90   18 5
+float consigneAir = 17;  //  20.90   18 5
 float modifConsigneAir = 0.12;
 
 int tabVal[31];
@@ -74,7 +74,7 @@ float finTabTemp = 35;
 
 unsigned long tempsFermetureBrume = 0;
 
-int nbJour = 1;
+int nbJour = 10;
 
 unsigned long dureeAction = 0; 
 unsigned long dureeActivationBrume = 60000;
@@ -369,8 +369,7 @@ void gestionHumidite(){
     // ---------------------------------------------------------------- //
     // Partie temperature sec  
     // calcul lot de temperature sec
-    
-    temperatureSecP = getTemperature(A1);
+    temperatureSecP = getTemperature(A2);
     if(temperatureSecP > 10 && temperatureSecP < 30){
       // total temperature sec
       totalTempSec += temperatureSecP;
@@ -381,7 +380,7 @@ void gestionHumidite(){
     // Partie temperature humide
     if(millis() - debutMesure > timerHum){ // commence au bout de 1m30 
     // calcul lot de temperature hum
-      temperatureHumP = getTemperature(A2);  // acquisition de la température hum
+      temperatureHumP = getTemperature(A1);  // acquisition de la température hum
 
       if(temperatureHumP > 10 && temperatureHumP < 30){
         // total temperature hum

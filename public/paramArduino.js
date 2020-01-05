@@ -14,21 +14,21 @@ socket.on('dataJson', (data) => {
 });
 
 function setParamArduino(data){
-    $('.#etalonageAir').text(data.etalonageAir);
-    $('.#etalonageSec').text(data.etalonagSec);
-    $('.#etalonageHum').text(data.etalonageHum);
+    $('#etalonageAir').text(data.etalonageAir);
+    $('#etalonageSec').text(data.etalonageSec);
+    $('#etalonageHum').text(data.etalonageHum);
 }
 
 function bindEvent(){
-    $('#etalonageAir').click(()=>{
+    $('.etalonageAir').click(()=>{
         socket.emit('newEtalonageAir', $('#valEtalonageAir').val());
     });
 
-    $('#etalonageSec').click(()=>{
+    $('.etalonageSec').click(()=>{
         socket.emit('newEtalonageSec', $('#valEtalonageSec').val());
     });
 
-    $('#etalonageHum').click(()=>{
+    $('.etalonageHum').click(()=>{
         socket.emit('newEtalonageHum', $('#valEtalonageHum').val());
     });
 }
