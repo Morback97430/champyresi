@@ -1,3 +1,6 @@
+// version Arduino
+String versionArduino = " tag 1.33";
+
 #include <ArduinoJson.h> 
 
 #define pinAir 6 // Déshumidifie
@@ -205,6 +208,7 @@ StaticJsonDocument<capacity> generateJSON()
   
   document["nbJour"]=nbJour;
   document["Millis"]=millis();
+  document["versionArduino"] = versionArduino;
   
   return document;
 }
