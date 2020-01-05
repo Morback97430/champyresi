@@ -73,7 +73,7 @@ class Arduino{
                                 this.setJson(this.jsonComplet);                                
                             }catch(err)
                             {
-                                loggerErreur.error({label:"Json Parse onData", message: this.jsonComplet});
+                                loggerErreur("Json Parse onData", this.jsonComplet);
                                 //this.eventEmitter.emit("erreur", err.message);
                             }
                             this.jsonComplet = "";
