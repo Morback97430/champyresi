@@ -14,7 +14,7 @@ socket.on('dataJson', (data) => {
 
 function setParamArduino(data){
     $('#etalonageAir').text(data.etalonageAir);
-    $('#etalonageSec').text(data.etalonagSec);
+    $('#etalonageSec').text(data.etalonageSec);
     $('#etalonageHum').text(data.etalonageHum);
 }
 

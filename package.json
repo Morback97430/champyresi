@@ -18,8 +18,8 @@
     "nodemon": "^1.19.4"
   },
   "scripts": {
-    "go": "nodemon serveur.js",
-    "start": "node serveur.js",
+    "go": "sudo nodemon serveur.js",
+    "start": "sudo node serveur.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
