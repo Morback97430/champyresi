@@ -7,7 +7,7 @@ require('winston-daily-rotate-file');
 const path = require('path');
 
 // Info
-let transportInfo =  new winston.transports.DailyRotateFile(
+let transportInfo =  new winston.transports.File(
   { level:"info",
     filename: './log/serveur/info/logInfo.log', 
     maxsize: "209 715 200", maxFiles:5}
@@ -52,7 +52,7 @@ const loggerArduino = createLogger({
 loggerArduino.exitOnError = false;
 
 // Erreur
-let transportErreur = new winston.transports.DailyRotateFile(
+let transportErreur = new winston.transports.File(
   { level:"error",
     filename: './log/serveur/erreur/logErreur.log', 
     maxsize: "209 715 200", maxFiles:5}
