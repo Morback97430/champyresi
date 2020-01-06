@@ -5,7 +5,7 @@ const path = require('path');
 require("uglify-js");
 
 const server = app.listen(3000,() => {
-  console.log('Example app listening on port 3000!');
+  console.log('Serveur en cour 3000!');
 });
 
 let io = require('socket.io')(server);
