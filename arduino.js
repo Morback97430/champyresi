@@ -48,6 +48,8 @@ class Arduino{
                 io.emit('connectPort', false);
                 this.port = null;
             });
+
+            io.emit('connectPort', false);
         }else if(!this.isOpen()){
             this.port = null;
         }
@@ -68,7 +70,7 @@ class Arduino{
                             this.enregistreJson = false;
                             try
                             {
-                                io.emit("dataJson", JSON.parse(this.jsonComplet));
+                                this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
 
                                 this.setJson(this.jsonComplet);                                
                             }catch(err)
