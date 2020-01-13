@@ -365,8 +365,8 @@ void gestionHumidite(){
 
   bool continuerMesure = true;
 
-  moySec = 0;
-  moyHum = 0;
+  float moyenneSec = 0;
+  float moyenneHum = 0;
 
   activeVentilo();
 
@@ -401,14 +401,17 @@ void gestionHumidite(){
     
   desactiveVentilo();
 
-  moySec = totalTempSec / compteurSec; // Valeur moyenne
-  moySec += etalonageSec;
+  moyenneSec = totalTempSec / compteurSec; // Valeur moyenne
+  moyenneSec += etalonageSec;
   
-  moyHum = totalTempHum / compteurHum; // Valeur moyenne
-  moyHum += etalonageHum;
+  moyenneHum = totalTempHum / compteurHum; // Valeur moyenne
+  moyenneHum += etalonageHum;
     
-  Serial.print("Temperature Seche"); Serial.println(moySec);
-  Serial.print("Temperature Humide"); Serial.println(moyHum);
+  Serial.print("Temperature Seche"); Serial.println(moyenneSec);
+  Serial.print("Temperature Humide"); Serial.println(moyenneHum);
+
+  moySec = moyenneSec;
+  moyHum = moyenneHum;
 }
 
  
@@ -434,17 +437,16 @@ float getTemperature(int pin){
   float moyenne = 0;
 
   for(int i=0; i<31; i++){
-      temperatureP = analogRead(pin); 
-      if (temperatureP < 205 || temperatureP > 1023){
-        tabVal[i] = 0;
-      }else{
-        tabVal[i] = temperatureP;
-      }
-
-      // recupére la veleur
-      delayAS(250);
+    temperatureP = analogRead(pin); 
+    if (temperatureP < 205 || temperatureP > 1023){
+      tabVal[i] = 0;
+    }else{
+      tabVal[i] = temperatureP;
     }
 
+    // recupére la veleur
+    delayAS(250);
+  }
 
     moyenne = calculMoySondeAna(tabVal, sizeof(tabVal) / sizeof(tabVal[0]));
 
