@@ -1,5 +1,5 @@
 // version Arduino
-String versionArduino = " tag 1.33";
+String versionArduino = "tag 1.35";
 
 #include <ArduinoJson.h> 
 
@@ -448,11 +448,11 @@ float getTemperature(int pin){
     delayAS(250);
   }
 
-    moyenne = calculMoySondeAna(tabVal, sizeof(tabVal) / sizeof(tabVal[0]));
+  moyenne = calculMoySondeAna(tabVal, sizeof(tabVal) / sizeof(tabVal[0]));
 
-    temperature = (float)map(moyenne, 205, 1023, 100, 400) / 10;
+  temperature = (float)map(moyenne, 205, 1023, 100, 400) / 10;
 
-    return temperature;
+  return temperature;
 }
 
 // TODO Recup taille d'un tableau
