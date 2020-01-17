@@ -28,10 +28,24 @@ class Arduino{
 
        this.modifParametre = [];
        this.json = pJson;
+
+       this.emitJson();
     }
 
     getJson(){
         return this.json;
+    }
+
+    emitJson(){
+        if(this.json){
+            try
+            {
+                this.eventEmitter.emit("dataJson", JSON.parse(this.json));
+            }catch(err){
+                loggerErreur("Json Parse onData", this.json);
+                //this.eventEmitter.emit("erreur", err.message);
+            }
+        }
     }
 
     listPort(){
@@ -68,16 +82,7 @@ class Arduino{
                     this.parser.on('data', (data) => {
                         if (data == "FIN JSON\r"){
                             this.enregistreJson = false;
-                            try
-                            {
-                                this.eventEmitter.emit("dataJson", JSON.parse(this.jsonComplet));
-
-                                this.setJson(this.jsonComplet);                                
-                            }catch(err)
-                            {
-                                loggerErreur("Json Parse onData", this.jsonComplet);
-                                //this.eventEmitter.emit("erreur", err.message);
-                            }
+                            this.setJson(this.jsonComplet);                                
                             this.jsonComplet = "";
                         }
 
@@ -110,6 +115,14 @@ class Arduino{
         
         this.port.write(label + "\n");
         this.port.write(dataJson + "\n");
+    }
+
+    parseData(dataBrut){
+        if(this.eventEmitter && !this.json){
+            this.setJson(dataBrut.split("#")[1]);
+        }else if(this.eventEmitter && this.json){
+            this.emitJson();
+        }
     }
 }
 
