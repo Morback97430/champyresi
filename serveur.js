@@ -18,6 +18,17 @@ let arduino = new Arduino(serialPort);
 const Client = require('./client');
 let client = new Client(arduino);
 
+const getLastLine = require('./fileTools.js').getLastLine;
+const fileName = './log/arduino/logArduino.log';
+
+getLastLine(fileName, 1)
+    .then((lastData)=> {
+        arduino.parseData(lastData)
+    })
+    .catch((err)=> {
+        console.error(err);
+    })
+
 io.on('connection', (socket) => {
   client.newConnection(socket);
 });

@@ -12,6 +12,7 @@ class Client{
         if(this.arduino.isOpen()){
             io.emit("connectPort", true);
             // TODO emit dataJson dernier Json
+            this.arduino.emitJson();
         }
         
         socket.on('reqListPort', () => {
@@ -46,8 +47,11 @@ class Client{
                             io.emit('erreur', err);
                         });
 
+                        this.arduino.emitJson();
+
                         io.emit("connectPort", true);
                     }
+
                 })
                 .catch((err) => {
                     io.emit("connectPort", false);
