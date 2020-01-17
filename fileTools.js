@@ -10,14 +10,9 @@ exports.getLastLine = (fileName, minLength) => {
         let rl = readline.createInterface(inStream, outStream);
 
         let lastLine = '';
-        let beforeLastLine = '';
 
         rl.on('line', function (line) {
             if (line.length >= minLength) {
-                if(beforeLastLine == '' && lastLine != line){
-                    beforeLastLine = lastLine;
-                }
-
                 lastLine = line;
             }
         });
@@ -25,7 +20,7 @@ exports.getLastLine = (fileName, minLength) => {
         rl.on('error', reject)
 
         rl.on('close', function () {
-            resolve(beforeLastLine)
+            resolve(lastLine)
         });
     })
 }

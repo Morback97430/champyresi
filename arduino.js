@@ -118,11 +118,11 @@ class Arduino{
     }
 
     parseData(dataBrut){
-        if(this.eventEmitter && !this.json){
-            this.setJson(dataBrut.split("#")[1]);
-        }else if(this.eventEmitter && this.json){
-            this.emitJson();
+        if(!this.json){
+            this.json = dataBrut.split("#")[1];
         }
+
+        this.emitJson();
     }
 }
 
