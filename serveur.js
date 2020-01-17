@@ -23,7 +23,7 @@ const fileName = './log/arduino/logArduino.log';
 
 getLastLine(fileName, 1)
     .then((lastData)=> {
-        arduino.parseData(lastData)
+        arduino.parseData(lastData);
     })
     .catch((err)=> {
         console.error(err);
