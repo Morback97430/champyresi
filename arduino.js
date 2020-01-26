@@ -1,16 +1,16 @@
 let io = require('./serveur');
 
+let serialPort = require('serialport');
+
 let events = require('events');
 let Readline = require('@serialport/parser-readline');
-
 
 let loggerArduino = require("./logger").loggerArduino;
 let loggerInfo = require("./logger").loggerInfo;
 let loggerErreur = require("./logger").loggerErreur;
 
 class Arduino{
-    constructor(pSerialPort){
-        this.serialPort = pSerialPort;
+    constructor(){
         this.json = "";
 
         this.enregistreJson = false;
@@ -49,12 +49,12 @@ class Arduino{
     }
 
     listPort(){
-        return this.serialPort.list();
+        return serialPort.list();
     }
 
     connect(choixPort){
         if(this.port == null){
-            this.port = new this.serialPort(choixPort,{baudRate:9600, autoOpen:false});
+            this.port = new serialPort(choixPort,{baudRate:9600, autoOpen:false});
             this.parser = new Readline("\n");
 
             this.port.pipe(this.parser);
