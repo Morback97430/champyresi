@@ -7,7 +7,6 @@ io.on('connection', (socket) => {
 });
 
 function connectToArduino(arduino){
-    console.log(arduino);
     new Client(arduino);
 }
 
