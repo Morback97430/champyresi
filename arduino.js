@@ -119,7 +119,7 @@ class Arduino{
 
     parseData(dataBrut){
         if(!this.json){
-            this.json = dataBrut.split("#")[1];
+            this.json = dataBrut.split("#")[1].split(" / Valeur Manuelle modifier")[0];
         }
 
         this.emitJson();
