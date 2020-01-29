@@ -10,13 +10,11 @@ const server = app.listen(3000,() => {
 
 let io = require('socket.io')(server);
 module.exports = io;
-const serialPort = require('serialport');
 
 const Arduino = require('./arduino');
-let arduino = new Arduino(serialPort);
+let arduino = new Arduino();
 
-const Client = require('./client');
-let client = new Client(arduino);
+require('./client')(arduino);
 
 const getLastLine = require('./fileTools.js').getLastLine;
 const fileName = './log/arduino/logArduino.log';
@@ -28,10 +26,6 @@ getLastLine(fileName, 1)
     .catch((err)=> {
         console.error(err);
     })
-
-io.on('connection', (socket) => {
-  client.newConnection(socket);
-});
 
 var cons = require('consolidate');
 

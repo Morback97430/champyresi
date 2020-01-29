@@ -2,21 +2,46 @@ let io = require('./serveur');
 
 let loggerErreur = require("./logger").loggerErreur;
 
+io.on('connection', (socket) => {
+    Client.newConnection(socket);
+});
+
+function connectToArduino(arduino){
+    new Client(arduino);
+}
+
 class Client{
-    constructor(pArduino){
-        this.arduino = pArduino;
-        this.eventArduino = null;
+    static get arduino(){
+        return this.hasOwnProperty('_arduino') ? this._arduino : void 0;
     }
 
-    newConnection(socket){
-        if(this.arduino.isOpen()){
+    static set arduino(p){
+        this._arduino = p;
+    }
+    
+    static get eventArduino(){
+        return this.hasOwnProperty('_eventArduino') ? this._eventArduino : void 0;
+    }
+
+    static set eventArduino(p){
+        this._eventArduino = p;
+    }
+
+    constructor(pArduino){
+        if(!Client.arduino){
+            Client.arduino = pArduino;
+        }
+    }
+
+    static newConnection(socket){
+        if(Client.arduino.isOpen()){
             io.emit("connectPort", true);
             // TODO emit dataJson dernier Json
-            this.arduino.emitJson();
+            Client.arduino.emitJson();
         }
         
         socket.on('reqListPort', () => {
-            this.arduino.listPort()
+            Client.arduino.listPort()
                 .then((ports, err) => {
                     if(!err){
                         io.emit('listPortName', ports.map(value => value.comName));
@@ -27,27 +52,27 @@ class Client{
         });           
         
         socket.on('choixPort', (choixPort) => {
-            this.arduino.connect(choixPort)
+            Client.arduino.connect(choixPort)
                 .then((etatPort) => {
-                    if(this.eventArduino == null){
-                        this.eventArduino = etatPort;
+                    if(Client.eventArduino == null){
+                        Client.eventArduino = etatPort;
                     
-                        this.eventArduino.on('connectPort', (etatPort) => {
+                        Client.eventArduino.on('connectPort', (etatPort) => {
                             io.emit('connectPort', false);
                             io.emit('erreur', "Port fermer, choissisez un port");
                         });
 
                         // EventListener quand new dataJson emit to client
-                        this.eventArduino.on('dataJson', (valJson) =>{
+                        Client.eventArduino.on('dataJson', (valJson) =>{
                             io.emit('dataJson', valJson);
                         });
 
-                        this.eventArduino.on('erreur', (err) => {
+                        Client.eventArduino.on('erreur', (err) => {
                             loggerErreur.error({label:"Port on erreur", message:err});
                             io.emit('erreur', err);
                         });
 
-                        this.arduino.emitJson();
+                        Client.arduino.emitJson();
 
                         io.emit("connectPort", true);
                     }
@@ -62,58 +87,58 @@ class Client{
         });
 
         socket.on('saveJour', (nbJour) => {
-            this.arduino.envoieData("J", {nBJ:nbJour});
+            Client.arduino.envoieData("J", {nBJ:nbJour});
         });
 
         socket.on('dureeActivation', (dureeActivation) => {
-            this.arduino.envoieData("dA", {dA:dureeActivation});
+            Client.arduino.envoieData("dA", {dA:dureeActivation});
         });
 
         socket.on("newConsigneAir", (consigneAir) => {
             consigneAir.replace(",",".");
             if(consigneAir == parseFloat(consigneAir)){
-                this.arduino.envoieData("mA", {cA:consigneAir});
+                Client.arduino.envoieData("mA", {cA:consigneAir});
             }
         });
 
         socket.on("newConsigneHum", (consigneHum) => {
             consigneHum.replace(",",".");
             if(consigneHum == parseFloat(consigneHum)){
-                this.arduino.envoieData("mH",{cH:consigneHum});
+                Client.arduino.envoieData("mH",{cH:consigneHum});
             }
         });
 
         socket.on("newModifAir", (modifAir) => {
             modifAir.replace(",",".");
             if(modifAir == parseFloat(modifAir)){
-                this.arduino.envoieData("mFA",{cFA:modifAir});
+                Client.arduino.envoieData("mFA",{cFA:modifAir});
             }
         });
     
         socket.on("newModifHum", (modifHum) => {
             modifHum.replace(",", ".");
             if(modifHum == parseFloat(modifHum)){
-                this.arduino.envoieData("mFH",{cFH:modifHum});
+                Client.arduino.envoieData("mFH",{cFH:modifHum});
             }
         });
 
         socket.on("newEtalonageAir", (etalAir) => 
         {
-            this.arduino.envoieData("eAir",{eAir:etalAir});
+            Client.arduino.envoieData("eAir",{eAir:etalAir});
         });
 
         
         socket.on("newEtalonageSec", (etalSec) => 
         {
-            this.arduino.envoieData("eSec",{eSec:etalSec});
+            Client.arduino.envoieData("eSec",{eSec:etalSec});
         });
 
         
         socket.on("newEtalonageHum", (etalHum) => 
         {
-            this.arduino.envoieData("eHum",{eHum:etalHum});
+            Client.arduino.envoieData("eHum",{eHum:etalHum});
         });
     }
 }
 
-module.exports = Client;
+module.exports = connectToArduino;
