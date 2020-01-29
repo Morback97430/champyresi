@@ -105,6 +105,8 @@ unsigned long dix                 = 600000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
+String suiviProcess = "Allumage";
+
 void setup() {  
   // initialisation de l'affichage et du mode console      
   Serial.begin(9600);             // préparation du moniteur série 
@@ -210,6 +212,8 @@ StaticJsonDocument<capacity> generateJSON()
   document["Millis"]=millis();
   document["versionArduino"] = versionArduino;
   
+  document["suiviProcess"] = suiviProcess;
+
   return document;
 }
 
