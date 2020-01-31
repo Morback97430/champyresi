@@ -36,7 +36,7 @@ String lireVoieSerie();
 void delayAS(unsigned long);
 
 //JSON
-const int capacity = JSON_OBJECT_SIZE(20); // capacité du JSON
+const int capacity = JSON_OBJECT_SIZE(200); // capacité du JSON
 StaticJsonDocument<capacity> document;
 
 // etalonage
@@ -132,10 +132,11 @@ void loop(){
 
   cronTimer();
 
+  suiviProcess = "Gestion Temperature";
   gestionTemperature();
 
   if(nbJour > 5){
-
+    suiviProcess = "Gestion Humidite";
     // init moySec et moyHum
     gestionHumidite();
     Serial.println("Fin des Releve");
@@ -146,12 +147,14 @@ void loop(){
     regulateurHumidite();
   }else{
     if(millis() - intervalleActivation > dureeActivationBrume){
+      suiviProcess = "Periode Brume";
       periodeBrume();
       intervalleActivation = millis();
     }
   }
 
   // Timer entre les mesures
+  suiviProcess = "Attente entre Boucle";
   delayAS(dix);
 }  //fin de loop.
 
