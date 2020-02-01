@@ -36,7 +36,7 @@ String lireVoieSerie();
 void delayAS(unsigned long);
 
 //JSON
-const int capacity = JSON_OBJECT_SIZE(20); // capacité du JSON
+const int capacity = JSON_OBJECT_SIZE(200); // capacité du JSON
 StaticJsonDocument<capacity> document;
 
 // etalonage
@@ -105,6 +105,8 @@ unsigned long dix                 = 600000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
+String suiviProcess = "Allumage";
+
 void setup() {  
   // initialisation de l'affichage et du mode console      
   Serial.begin(9600);             // préparation du moniteur série 
@@ -130,10 +132,11 @@ void loop(){
 
   cronTimer();
 
+  suiviProcess = "Gestion Temperature";
   gestionTemperature();
 
   if(nbJour > 5){
-
+    suiviProcess = "Gestion Humidite";
     // init moySec et moyHum
     gestionHumidite();
     Serial.println("Fin des Releve");
@@ -144,12 +147,14 @@ void loop(){
     regulateurHumidite();
   }else{
     if(millis() - intervalleActivation > dureeActivationBrume){
+      suiviProcess = "Periode Brume";
       periodeBrume();
       intervalleActivation = millis();
     }
   }
 
   // Timer entre les mesures
+  suiviProcess = "Attente entre Boucle";
   delayAS(dix);
 }  //fin de loop.
 
@@ -210,6 +215,8 @@ StaticJsonDocument<capacity> generateJSON()
   document["Millis"]=millis();
   document["versionArduino"] = versionArduino;
   
+  document["suiviProcess"] = suiviProcess;
+
   return document;
 }
 

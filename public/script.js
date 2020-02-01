@@ -124,6 +124,7 @@ function setAppChampi(data){
     $('.tempsOuvertureBrume').text(data.tempsOuvertureBrume);
     $('.tempsFermetureBrume').text(data.tempsFermetureBrume);
     $('.nbJour').text(data.nbJour);
+    $('.suiviProcess').text(data.suiviProcess);
 }
 
 function initConsigne()
