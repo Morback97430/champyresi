@@ -1,5 +1,5 @@
 // version Arduino
-String versionArduino = "tag 1.35";
+String versionArduino = "tag 1.39";
 
 #include <ArduinoJson.h> 
 
