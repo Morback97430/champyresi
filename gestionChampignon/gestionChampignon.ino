@@ -101,11 +101,13 @@ float tabPressionSaturante [251] = {
 unsigned long tempsOuvertureBrume = 15000; // 15 secondes
 unsigned long timerHum            = 90000; // 1 minute 30
 unsigned long timerMesure         = 180000; // 3 minutes
+unsigned long cinq                = 300000; // 5 mintes
 unsigned long dix                 = 600000; // 10 minutes
 unsigned long douze               = 43200000; // 12 heures
 unsigned long jour                = 86400000; // 24 heures
 
 String suiviProcess = "Allumage";
+String suiviSousProcess = "";
 
 void setup() {  
   // initialisation de l'affichage et du mode console      
@@ -133,10 +135,12 @@ void loop(){
   cronTimer();
 
   suiviProcess = "Gestion Temperature";
+  suiviSousProcess = "";
   gestionTemperature();
 
   if(nbJour > 5){
     suiviProcess = "Gestion Humidite";
+    suiviSousProcess = "";
     // init moySec et moyHum
     gestionHumidite();
     Serial.println("Fin des Releve");
@@ -148,6 +152,7 @@ void loop(){
   }else{
     if(millis() - intervalleActivation > dureeActivationBrume){
       suiviProcess = "Periode Brume";
+      suiviSousProcess = "";
       periodeBrume();
       intervalleActivation = millis();
     }
@@ -155,7 +160,7 @@ void loop(){
 
   // Timer entre les mesures
   suiviProcess = "Attente entre Boucle";
-  delayAS(dix);
+  delayAS(cinq);
 }  //fin de loop.
 
 void delayAS(unsigned long dureeTimer){
@@ -173,7 +178,7 @@ void gestionTemperature(){
     // reglage du Temperature Air
     temperatureAir = 0;
     temperatureAir = getTemperature(A0);
-
+    suiviSousProcess = "Mesure Temperature Air";
     if(temperatureAir > 10 && temperatureAir < 30){
       temperatureAir = temperatureAir + etalonageAir;
       Serial.print("Temperature Air        "); Serial.println(temperatureAir);
@@ -216,6 +221,7 @@ StaticJsonDocument<capacity> generateJSON()
   document["versionArduino"] = versionArduino;
   
   document["suiviProcess"] = suiviProcess;
+  document["suiviSousProcess"] = suiviSousProcess;
 
   return document;
 }
@@ -266,7 +272,7 @@ void regulateurAir(float deltaTemp){
     if (deltaTemp > 1.5){
       duree = 40000;
     } // ouverture totale
-
+    suiviSousProcess = "Temperature Trop haut";
     gestionDeltaAirPositif(duree);
   }
 
@@ -283,7 +289,7 @@ void regulateurAir(float deltaTemp){
     if (deltaTemp < -1.5){
       duree = 40000;
     } // fermeture totale
-    
+    suiviSousProcess = "Temperature Trop bas";
     gestionDeltaAirNegatif(duree);
   }
    
@@ -297,22 +303,23 @@ void regulateurAir(float deltaTemp){
 void regulateurHumidite(){
  // Action
   if(tauxHumidite < consigneHum){
+    suiviSousProcess = "Humidite Trop bas";
     coeffH = consigneHum - tauxHumidite;
-    if (coeffH<0.3){
-      delayAS(780000);
-    }
-    if (coeffH > 0.3 && coeffH < 1) {tempsFermetureBrume = 105000;} // ouverture 2 sec    
-    if (coeffH > 1 && coeffH < 2)   {tempsFermetureBrume = 60000;} // ouverture 5 sec 
-    if (coeffH > 2 && coeffH < 3)   {tempsFermetureBrume = 45000;} // ouverture 15 sec
-    if (coeffH > 3)                 {tempsFermetureBrume = 30000;}
+    if (coeffH>0.3){
+      if (coeffH > 0.3 && coeffH < 1) {tempsFermetureBrume = 105000;} // ouverture 2 sec    
+      if (coeffH > 1 && coeffH < 2)   {tempsFermetureBrume = 60000;} // ouverture 5 sec 
+      if (coeffH > 2 && coeffH < 3)   {tempsFermetureBrume = 45000;} // ouverture 15 sec
+      if (coeffH > 3)                 {tempsFermetureBrume = 30000;}
 
-    periodeBrume();
+      periodeBrume();
+    }
 
     Serial.print("------------------arrosage----------");
     Serial.print("temps");Serial.print(tempsFermetureBrume);
   }
   else if(tauxHumidite > consigneHum){
-     coeffD=tauxHumidite-consigneHum;
+    suiviSousProcess = "Humidite Trop haut";
+    coeffD=tauxHumidite-consigneHum;
 
     if (coeffD > 0.3  && coeffD < 1)  {timerDeshum=180000;} // ouverture 2 sec    
     if (coeffD > 1    && coeffD < 2)  {timerDeshum=300000;} // ouverture 5 sec 
@@ -325,7 +332,7 @@ void regulateurHumidite(){
     Serial.print("temps");Serial.print(timerDeshum);
 
     delayAS(timerDeshum);
-    desactiveDeshum();  
+    desactiveDeshum();
   }
 }
 
@@ -381,6 +388,7 @@ void gestionHumidite(){
     // ---------------------------------------------------------------- //
     // Partie temperature sec  
     // calcul lot de temperature sec
+    suiviSousProcess = "Mesure Temperature Sec";
     temperatureSecP = getTemperature(A2);
     if(temperatureSecP > 10 && temperatureSecP < 30){
       // total temperature sec
@@ -393,7 +401,7 @@ void gestionHumidite(){
     if(millis() - debutMesure > timerHum){ // commence au bout de 1m30 
     // calcul lot de temperature hum
       temperatureHumP = getTemperature(A1);  // acquisition de la température hum
-
+      suiviSousProcess = "Mesure Temperature Humide";
       if(temperatureHumP > 10 && temperatureHumP < 30){
         // total temperature hum
         totalTempHum +=  temperatureHumP;
