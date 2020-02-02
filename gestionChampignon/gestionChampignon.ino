@@ -223,6 +223,7 @@ StaticJsonDocument<capacity> generateJSON()
 
 void envoieData(StaticJsonDocument<capacity> document){
   serializeJson(document, Serial);
+  Serial.println();
   delay(100);
 }
 void ioData(){

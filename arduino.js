@@ -13,9 +13,6 @@ class Arduino{
     constructor(){
         this.json = "";
 
-        this.enregistreJson = false;
-        this.jsonComplet = ""; // Stock l'enregistrement du json envoyer depuis Arduino
-
         this.modifParametre = [];
 
         this.port = null;
@@ -80,20 +77,7 @@ class Arduino{
                 }else{
                     // Plusieur rajout event 'data' ??
                     this.parser.on('data', (data) => {
-                        if (data == "FIN JSON\r"){
-                            this.enregistreJson = false;
-                            this.setJson(this.jsonComplet);                                
-                            this.jsonComplet = "";
-                        }
-
-                        if (this.enregistreJson){
-                            this.jsonComplet += data;
-                        }
-
-                        if (data == "DEBUT JSON\r")
-                        {
-                            this.enregistreJson = true;
-                        }
+                        this.setJson(data);                                
                     });
                     resolve(this.eventEmitter);
                 }
