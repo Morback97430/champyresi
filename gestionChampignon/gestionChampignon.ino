@@ -143,10 +143,8 @@ void loop(){
     suiviSousProcess = "";
     // init moySec et moyHum
     gestionHumidite();
-    Serial.println("Fin des Releve");
 
-    tauxHumidite =  calculHumidite();
-    Serial.print("tauxHumidite"); Serial.println(tauxHumidite);  
+    tauxHumidite =  calculHumidite(); 
       
     regulateurHumidite();
   }else{
@@ -173,16 +171,13 @@ void delayAS(unsigned long dureeTimer){
 }
 
 void gestionTemperature(){
-    Serial.print("consigne  Air : "); Serial.println(consigneAir);
-
     // reglage du Temperature Air
     temperatureAir = 0;
     temperatureAir = getTemperature(A0);
-    suiviSousProcess = "Mesure Temperature Air";
+    suiviSousProcess = "Mesure Temperature Air";delayAS(100);
     if(temperatureAir > 10 && temperatureAir < 30){
       temperatureAir = temperatureAir + etalonageAir;
-      Serial.print("Temperature Air        "); Serial.println(temperatureAir);
-      
+
       deltaTemp = temperatureAir - consigneAir;
       dureeAction = 0;
 
@@ -227,12 +222,8 @@ StaticJsonDocument<capacity> generateJSON()
 }
 
 void envoieData(StaticJsonDocument<capacity> document){
-  Serial.println("DEBUT JSON");
-  delay(200);
   serializeJson(document, Serial);
-  Serial.println("");
-  delay(200);
-  Serial.println("FIN JSON");
+  delay(100);
 }
 void ioData(){
   document = generateJSON();
@@ -313,9 +304,6 @@ void regulateurHumidite(){
 
       periodeBrume();
     }
-
-    Serial.print("------------------arrosage----------");
-    Serial.print("temps");Serial.print(tempsFermetureBrume);
   }
   else if(tauxHumidite > consigneHum){
     suiviSousProcess = "Humidite Trop haut";
@@ -327,10 +315,6 @@ void regulateurHumidite(){
     if (coeffD > 3)                   {timerDeshum=480000;}
 
     activeDeshum();
-    
-    Serial.print("------------------desu----------");
-    Serial.print("temps");Serial.print(timerDeshum);
-
     delayAS(timerDeshum);
     desactiveDeshum();
   }
@@ -342,7 +326,7 @@ void gestionDeltaAirPositif(unsigned long duree){
   delayAS(duree);  
   digitalWrite (pinFerme,HIGH); 
   digitalWrite (pinOuvert,HIGH); 
-  Serial.print("vanne ouvert"); Serial.println(duree / 1000); Serial.println("sec  ");  
+ 
   etatVanneFroid += duree / 1000;
 
   dureeAction = duree;
@@ -352,7 +336,6 @@ void gestionDeltaAirNegatif(unsigned long duree){
   digitalWrite (pinFerme,LOW);
   delayAS (duree); 
   digitalWrite (pinFerme,HIGH);
-  Serial.print("vanne ferme"); Serial.println(duree / 1000); Serial.println("sec  ");
   etatVanneFroid -= duree / 1000;
 
   dureeAction = duree;
@@ -421,9 +404,6 @@ void gestionHumidite(){
   
   moyenneHum = totalTempHum / compteurHum; // Valeur moyenne
   moyenneHum += etalonageHum;
-    
-  Serial.print("Temperature Seche"); Serial.println(moyenneSec);
-  Serial.print("Temperature Humide"); Serial.println(moyenneHum);
 
   moySec = moyenneSec;
   moyHum = moyenneHum;
@@ -535,7 +515,7 @@ void desactiveVentilo(){
 }
 
 void periodeBrume(){
-  
+  suiviSousProcess = "Brume En Cours";
   unsigned long debutbrume = millis();
   bool continuerMesurebrume = true;
   
