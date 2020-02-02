@@ -1,5 +1,5 @@
 // version Arduino
-String versionArduino = "tag 1.43";
+String versionArduino = "tag 1.44";
 
 #include <ArduinoJson.h> 
 
@@ -36,7 +36,7 @@ String lireVoieSerie();
 void delayAS(unsigned long);
 
 //JSON
-const int capacity = JSON_OBJECT_SIZE(20); // capacité du JSON
+const int capacity = JSON_OBJECT_SIZE(30); // capacité du JSON
 StaticJsonDocument<capacity> document;
 
 // etalonage
