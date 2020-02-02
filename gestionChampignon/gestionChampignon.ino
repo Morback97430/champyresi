@@ -1,5 +1,5 @@
 // version Arduino
-String versionArduino = "tag 1.44";
+String versionArduino = "tag 1.45";
 
 #include <ArduinoJson.h> 
 
@@ -36,8 +36,9 @@ String lireVoieSerie();
 void delayAS(unsigned long);
 
 //JSON
-const int capacity = JSON_OBJECT_SIZE(30); // capacité du JSON
-StaticJsonDocument<capacity> document;
+const int capacity = JSON_OBJECT_SIZE(20); // capacité du JSON
+const int capacityDoc = JSON_OBJECT_SIZE(200);
+StaticJsonDocument<capacityDoc> document;
 
 // etalonage
 float etalonageSec = 1;
@@ -185,7 +186,7 @@ void gestionTemperature(){
     }
 }
 
-StaticJsonDocument<capacity> generateJSON()
+StaticJsonDocument<capacityDoc> generateJSON()
 {
   document["temperatureAir"]=temperatureAir;
   document["consigneAir"]=consigneAir;
@@ -221,7 +222,7 @@ StaticJsonDocument<capacity> generateJSON()
   return document;
 }
 
-void envoieData(StaticJsonDocument<capacity> document){
+void envoieData(StaticJsonDocument<capacityDoc> document){
   serializeJson(document, Serial);
   Serial.println();
   delay(100);
@@ -373,7 +374,7 @@ void gestionHumidite(){
     // ---------------------------------------------------------------- //
     // Partie temperature sec  
     // calcul lot de temperature sec
-    suiviSousProcess = "Mesure Temperature Sec";
+    suiviSousProcess = "Mesure Temperature Sec";delayAS(100);
     temperatureSecP = getTemperature(A2);
     if(temperatureSecP > 10 && temperatureSecP < 30){
       // total temperature sec
@@ -386,7 +387,7 @@ void gestionHumidite(){
     if(millis() - debutMesure > timerHum){ // commence au bout de 1m30 
     // calcul lot de temperature hum
       temperatureHumP = getTemperature(A1);  // acquisition de la température hum
-      suiviSousProcess = "Mesure Temperature Humide";
+      suiviSousProcess = "Mesure Temperature Humide";delayAS(100);
       if(temperatureHumP > 10 && temperatureHumP < 30){
         // total temperature hum
         totalTempHum +=  temperatureHumP;
