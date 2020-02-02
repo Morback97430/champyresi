@@ -230,9 +230,14 @@ void envoieData(StaticJsonDocument<capacity> document){
   Serial.println("DEBUT JSON");
   delay(200);
   serializeJson(document, Serial);
+<<<<<<< Updated upstream
   Serial.println("");
   delay(200);
   Serial.println("FIN JSON");
+=======
+  Serial.println();
+  delay(100);
+>>>>>>> Stashed changes
 }
 void ioData(){
   document = generateJSON();
