@@ -309,15 +309,16 @@ void regulateurHumidite(){
   else if(tauxHumidite > consigneHum){
     suiviSousProcess = "Humidite Trop haut";
     coeffD=tauxHumidite-consigneHum;
+    if(coeffD > 0.3){
+      if (coeffD > 0.3  && coeffD < 1)  {timerDeshum=180000;} // ouverture 2 sec    
+      if (coeffD > 1    && coeffD < 2)  {timerDeshum=300000;} // ouverture 5 sec 
+      if (coeffD > 2    && coeffD < 3)  {timerDeshum=360000;} // ouverture 15 sec
+      if (coeffD > 3)                   {timerDeshum=480000;}
 
-    if (coeffD > 0.3  && coeffD < 1)  {timerDeshum=180000;} // ouverture 2 sec    
-    if (coeffD > 1    && coeffD < 2)  {timerDeshum=300000;} // ouverture 5 sec 
-    if (coeffD > 2    && coeffD < 3)  {timerDeshum=360000;} // ouverture 15 sec
-    if (coeffD > 3)                   {timerDeshum=480000;}
-
-    activeDeshum();
-    delayAS(timerDeshum);
-    desactiveDeshum();
+      activeDeshum();
+      delayAS(timerDeshum);
+      desactiveDeshum();
+    }
   }
 }
 
