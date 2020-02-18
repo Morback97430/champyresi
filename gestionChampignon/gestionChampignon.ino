@@ -76,7 +76,7 @@ unsigned long intervalleActivation = millis();
 float debutTabTemp = 10;
 float finTabTemp = 35;
 
-unsigned long tempsFermetureBrume = 0;
+unsigned long tempsFermetureBrume = 180000;
 
 int nbJour = 10;
 
