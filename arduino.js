@@ -77,6 +77,12 @@ class Arduino{
                 }else{
                     // Plusieur rajout event 'data' ??
                     this.parser.on('data', (data) => {
+                        try{
+                            JSON.parse(data);
+                        }
+                        catch(err){
+                            console.log(data);
+                        }
                         this.setJson(data);                                
                     });
                     resolve(this.eventEmitter);
