@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Application</title>
+  <link rel="stylesheet" href="assets/libs/_fortawesome/fontawesome-pro/css/all.min.css">
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="assets/libs/fullcalendar/dist/fullcalendar.min.css">
+  <!-- Purpose CSS -->
+  <link rel="stylesheet" href="assets/css/purpose.css" id="stylesheet">
+  <script src="/socket.io/socket.io.js"></script>
+    
+  <script src="asset/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+
+  <link rel="stylesheet" href="asset/bootstrap-4.3.1/css/bootstrap.min.css">
+  <script src="asset/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+
+  <style>  
+    #consigneAir {
+      margin: 20px;
+      width: 200px;
+      height: 200px;
+      position: relative;
+    }
+  </style>
+</head>
+
+<body class="application application-offset">
+
+
+  <!-- Application container -->
+  <div class="container-fluid container-application">
+    <!-- Sidenav -->
+    <div class="sidenav" id="sidenav-main">
+      <!-- Sidenav header -->
+      <div class="sidenav-header d-flex align-items-center">
+        <a class="navbar-brand" href="index.html">
+          <img src="assets/img/brand/white.png" class="navbar-brand-img" alt="...">
+        </a>
+        <div class="ml-auto">
+          <!-- Sidenav toggler -->
+          <div class="sidenav-toggler sidenav-toggler-dark d-md-none" data-action="sidenav-unpin"
+            data-target="#sidenav-main">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-application clearfix">
+        <a href="#" class="btn btn-square text-sm active">
+          <span class="btn-inner--icon d-block"><i class="far fa-home fa-2x"></i></span>
+          <span class="btn-inner--icon d-block pt-2">Accueil</span>
+        </a>
+        <a href="#" class="btn btn-square text-sm">
+          <span class="btn-inner--icon d-block"><i class="far fa-project-diagram fa-2x"></i></span>
+          <span class="btn-inner--icon d-block pt-2">Informations</span>
+        </a>
+        <a href="#" class="btn btn-square text-sm">
+          <span class="btn-inner--icon d-block"><i class="far fa-tasks fa-2x"></i></span>
+          <span class="btn-inner--icon d-block pt-2">Tâches</span>
+        </a>
+        <a href="#" class="btn btn-square text-sm">
+          <span class="btn-inner--icon d-block"><i class="far fa-columns fa-2x"></i></span>
+          <span class="btn-inner--icon d-block pt-2">A voir</span>
+        </a>
+        <a href="#" class="btn btn-square text-sm">
+          <span class="btn-inner--icon d-block"><i class="far fa-users-cog fa-2x"></i></span>
+          <span class="btn-inner--icon d-block pt-2">A voir</span>
+        </a>
+        <a href="#" class="btn btn-square text-sm">
+          <span class="btn-inner--icon d-block"><i class="far fa-user-ninja fa-2x"></i></span>
+          <span class="btn-inner--icon d-block pt-2">Admin</span>
+        </a>
+      </div>
+    </div>
+    <!-- Content -->
+    <div class="main-content position-relative">
+      <!-- Page content -->
+      <div class="page-content">
+
+        <div class="card-body text-center flex-column justify-content-center choixPort">
+          <div class="col align-self-center">            
+            <h3 class="text-white row justify-content-center col-3">Port</h3>
+            <div class="form-group row justify-content-center col-3">
+              <select class="form-control" id="listPort">
+        
+              </select>
+            </div>
+            <div class="row justify-content-center col-3"><button id="choixPort" type="button" class="btn btn-light">Choix du Port</button></div>
+          </div>
+         
+        </div>
+        <!-- Page title -->
+        <div class="page-title"></div>
+
+        <div class="row appChampi d-none">
+
+          <!-- Informations -->
+
+          <div class="col-xl-4 col-md-6">
+            <div class="card card-fluid">
+              <div class="card-body">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                  <h5 class="mb-4" style="margin-top: -5px;">Infors
+                    mations</h5>
+                </div>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-sm mb-0">
+                      Jours
+                    </h6>
+                  </div>
+                  <div class="col-auto nbJour">
+                    10
+                  </div>
+                </div>
+                <hr class="my-3">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-sm mb-0">
+                      Etat
+                    </h6>
+                  </div>
+                  <div class="col-auto suiviProcess">
+                    Lancement
+                  </div>
+                </div>
+                <hr class="my-3">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-sm mb-0">
+                      <span class="badge badge-dot">
+                        <i class="bg-success"></i>
+                        <span class="status">Sous Etat</span>
+                      </span>
+                    </h6>
+                  </div>
+                  <div class="col-auto suiviSousProcess">
+                    
+                  </div>
+                </div>
+                <hr class="my-3">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                  <h5 class="mb-4">Brume</h5>
+                </div>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-sm mb-0">
+                      Durée de brume
+                    </h6>
+                  </div>
+                  <div class="col-auto">
+                    <span class="tempsOuvertureBrume">0</span> secondes
+                  </div>
+                </div>
+                <hr class="my-3">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-sm mb-0">
+                      Intervale de brume
+                    </h6>
+                  </div>
+                  <div class="col-auto">
+                    <span class="tempsFermetureBrume">0</span> secondes
+                  </div>
+                </div>
+                <hr class="my-3">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-sm mb-0">
+                      Deshumidification
+                    </h6>
+                  </div>
+                  <div class="col-auto">
+                    <span class="tempsDeshum">0</span> secondes
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Température -->
+
+          <div class="col-xl-4 col-md-6">
+            <div class="card card-fluid">
+              <div class="card-body text-center d-flex flex-column justify-content-center">
+                <h5 class="mb-4" style="margin-top: 5px;">Température</h5>
+                <div id="consigneAir">
+                </div>
+                <!-- Cercle -->
+                <div class="d-flex mt-4">
+                  <div class="col">
+                    <button id="consigneAir--" type="button" class="btn btn-danger">
+                      -
+                    </button>
+                  </div>
+                  <div class="col">
+                    <button id="consigneAir++" type="button" class="btn btn-success">
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Information -->
+
+                <div class="d-flex mt-4">
+                  <div class="col text-left">
+                    <span class="d-block badge badge-dot badge-lg h6 text-left">
+                      <i class="bg-danger"></i>Mesure :
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-left">
+                      <i class="bg-danger"></i>Delta :
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-left">
+                    </span>
+                  </div>
+                  <hr class="my-3">
+                  <div class="col text-right">
+                    <span class="d-block badge badge-dot badge-lg h6 text-right">
+                      <!-- Mesure -->
+                      <span class="temperatureAir">NC</span>°C
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-right">
+                      <!-- Delta -->
+                      <span class="coeff">NC</span>°C
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-left">
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Fin information -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Humidité -->
+
+          <div class="col-xl-4 col-md-6">
+            <div class="card card-fluid">
+              <div class="card-body text-center d-flex flex-column justify-content-center">
+                <h5 class="mb-4" style="margin-top: 20px;">Humidité</h5>
+                <div id="consigneHum" class="progress-circle progress-lg mx-auto" id="progress-5" data-progress="60" data-text="90%"
+                  data-textclass="h1 consigneHum" data-color="info"></div>
+                <div class="d-flex mt-4">
+                  <div class="col">
+                    <button id="consigneHum--" type="button" class="btn btn-danger">
+                      -
+                    </button>
+                  </div>
+                  <div class="col">
+                    <button type="button" class="btn btn-success">
+                      +
+                    </button>
+                  </div>
+                </div>
+                <div class="d-flex mt-4">
+                  <div class="col text-left">
+                    <span class="d-block badge badge-dot badge-lg h6 text-left">
+                      <i class="bg-danger"></i>Mesure Sec :
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-left">
+                      <i class="bg-danger"></i>Mesure Humide :
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-left">
+                      <i class="bg-danger"></i>Taux d'humidité :
+                    </span>
+                  </div>
+                  <hr class="my-3">
+                  <div class="col text-right">
+                    <span class="d-block badge badge-dot badge-lg h6 text-right">
+                      <span class="moySec">NC</span>°C
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-right">
+                      <span class="moyHum">NC</span>°C
+                    </span>
+                    <span class="d-block badge badge-dot badge-lg h6 text-right">
+                      <span class="tauxHumidite">NC</span>%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Scripts -->
+  <!-- Core JS - includes jquery, bootstrap, popper, in-view and sticky-kit -->
+  <script src="assets/js/purpose.core.js"></script>
+  <!-- Page JS -->
+  <script src="assets/libs/progressbar-js/dist/progressbar.min.js"></script>
+  <!-- Purpose JS -->
+  <script src="assets/js/purpose.js"></script>
+  <script src="/script.js"></script>
+</body>
+
+</html>
