@@ -1,6 +1,11 @@
 let socket = null;
 
+let consigneTemperature = "";
+let consigneHumidite = "";
+
 $(document).ready(() => {
+
+rajoutComponent();
 
 bindEvent();
 
@@ -59,25 +64,27 @@ function bindEvent(){
         socket.emit('choixPort', $('#listPort').val());
     });
 
-    $('#envoyerConsigneAir').click(()=>{
-        socket.emit('newConsigneAir', $('#consigneAir').val());
+    let pasAir = 0.5;
+
+    $('#consigneAir--').click(()=>{
+        socket.emit('newConsigneAir', $('#consigneAir').val() - pasAir);
         initConsigne();
     });
 
-    $('#envoyerConsigneHum').click(()=>{
-        socket.emit('newConsigneHum', $('#consigneHum').val());
+    $('#consigneAir++').click(()=>{
+        socket.emit('newConsigneAir', ++$('#consigneAir').val() + pasAir);
         initConsigne();
     });
 
-    $('#envoyerModifAir').click(()=>{
-        socket.emit('newModifAir', $('#modifConsigneAir').val());
+    $('#consigneHum--').click(()=>{
+        socket.emit('newConsigneHum', --$('#consigneHum').val());
         initConsigne();
     });
-     
-    $('#envoyerModifHum').click(()=>{
-        socket.emit('newModifHum', $('#modifConsigneHum').val());
+
+    $('#consigneHum++').click(()=>{
+        socket.emit('newConsigneHum', ++$('#consigneHum').val());
         initConsigne();
-    });
+    });    
 
     $('.gestionJour').click(() => {
         let jour = parseInt($('#saisiJour').val(), 10);
@@ -111,18 +118,25 @@ function calculActivation(nb){
 }
 
 function setAppChampi(data){
-    $('.temperatureAir').text(data.temperatureAir);
-    $('.consigneAir').text(data.consigneAir);
+    $('.temperatureAir').text(arrondi(data.temperatureAir));
+    
+    console.log($('.consigneAir').data("text"));
+    $('.consigneAir').text(arrondi(data.consigneAir) + "°C");
+    // $('.consigneAir').attr('data-progress', (arrondi(data.consigneAir) - 10) * 100 / 30);
+
     $('.modifConsigneAir').text(data.modifConsigneAir);
-    $('.tauxHumidite').text(data.tauxHumidite);
-    $('.consigneHum').text(data.consigneHum);
+    $('.tauxHumidite').text(arrondi(data.tauxHumidite));
+    
+    $('.consigneHum').text(arrondi(data.consigneHum) + "%");
+    // $('.consigneHum').attr('data-progress', arrondi(data.consigneHum));
+    
     $('.modifConsigneHum').text(data.modifConsigneHum);
-    $('.coeff').text(data.coeff);
-    $('.moySec').text(data.moySec);
-    $('.moyHum').text(data.moyHum);
-    $('.tempsDeshum').text(data.tempsDeshum);
-    $('.tempsOuvertureBrume').text(data.tempsOuvertureBrume);
-    $('.tempsFermetureBrume').text(data.tempsFermetureBrume);
+    $('.coeff').text(arrondi(data.coeff));
+    $('.moySec').text(arrondi(data.moySec));
+    $('.moyHum').text(arrondi(data.moyHum));
+    $('.tempsDeshum').text(arrondi(data.tempsDeshum / 1000));
+    $('.tempsOuvertureBrume').text(arrondi(data.tempsOuvertureBrume / 1000));
+    $('.tempsFermetureBrume').text(arrondi(data.tempsFermetureBrume / 1000));
     $('.nbJour').text(data.nbJour);
     $('.suiviProcess').text(data.suiviProcess);
     $('.suiviSousProcess').text(data.suiviSousProcess);
@@ -134,4 +148,21 @@ function initConsigne()
     $('#consigneHum').val("");
     $('#modifConsigneAir').val("");
     $('#modifConsigneHum').val("");   
+}
+
+const arrondi = (val) => Math.round(val * 100) / 100;
+
+const rajoutComponent = () => 
+{
+
+    var barAir = new ProgressBar.Circle(consigneAir, {
+        strokeWidth: 6,
+        easing: 'easeInOut',
+        duration: 1400,
+        color: '#FFEA82',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: null
+      });
+      
 }
