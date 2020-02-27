@@ -52,7 +52,13 @@ class Client{
         });           
         
         socket.on('closePort', () =>{
-            Client.arduino.close();
+            Client.arduino.close()
+                .then(() => {
+                    io.emit("connectPort", false);
+                })
+                .catch((err) => {
+                    loggerErreur("closePort", err);
+                });
         })
 
         socket.on('choixPort', (choixPort) => {

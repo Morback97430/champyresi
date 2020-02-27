@@ -17,7 +17,6 @@ class Arduino{
 
         this.port = null;
         this.parser = null;
-        this.eventEmitter = null;
     }
 
     setJson(pJson){
@@ -37,7 +36,7 @@ class Arduino{
         if(this.json){
             try
             {
-                this.eventEmitter.emit("dataJson", JSON.parse(this.json));
+                io.emit('dataJson', JSON.parse(this.json));
             }catch(err){
                 loggerErreur("Json Parse onData", this.json);
                 //this.eventEmitter.emit("erreur", err.message);
@@ -52,27 +51,8 @@ class Arduino{
     connect(choixPort){
         this.initSerialPort(choixPort)
         .then(() => {
-            if(this.eventEmitter == null){
-                this.eventEmitter = new events.EventEmitter();
-            
-                this.eventEmitter.on('connectPort', (etatPort) => {
-                    io.emit('connectPort', true);
-                });
-
-                // EventListener quand new dataJson emit to client
-                this.eventEmitter.on('dataJson', (valJson) =>{
-                    io.emit('dataJson', valJson);
-                });
-
-                this.eventEmitter.on('erreur', (err) => {
-                    loggerErreur("Port on erreur", err);
-                    io.emit('erreur', err);
-                });
-
-                this.emitJson();
-
-                io.emit("connectPort", true);
-            }
+            this.emitJson();
+            io.emit("connectPort", true);
         })
         .catch((err) => {console.log(err)
             io.emit("connectPort", false);
@@ -115,7 +95,7 @@ class Arduino{
             this.port.open((err) => {
                 if(err){
                     this.port = null;
-                    reject("Connection rate path(" + choixPort + ")");
+                    reject("Connection echec port(" + choixPort + ")");
                 }else{
                     // Plusieur rajout event 'data' ??
                     resolve();
@@ -125,13 +105,18 @@ class Arduino{
     }
 
     close(){
-        this.port.close((err) => {
+        return new Promise((resolve, reject) => {
+            this.port.close((err) => {
             if(err){
                 console.log("Erreur fermeture port");
+                reject(err);
             }else{
                 console.log("Port is close");
             }
-        });
+            
+            this.port = null;
+            resolve();
+        })});
     }
 
     isOpen(){
