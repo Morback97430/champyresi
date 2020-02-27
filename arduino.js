@@ -17,7 +17,6 @@ class Arduino{
 
         this.port = null;
         this.parser = null;
-        this.eventEmitter = new events.EventEmitter();
     }
 
     setJson(pJson){
@@ -37,7 +36,7 @@ class Arduino{
         if(this.json){
             try
             {
-                this.eventEmitter.emit("dataJson", JSON.parse(this.json));
+                io.emit('dataJson', JSON.parse(this.json));
             }catch(err){
                 loggerErreur("Json Parse onData", this.json);
                 //this.eventEmitter.emit("erreur", err.message);
@@ -50,17 +49,40 @@ class Arduino{
     }
 
     connect(choixPort){
+        this.initSerialPort(choixPort)
+        .then(() => {
+            this.emitJson();
+            io.emit("connectPort", true);
+        })
+        .catch((err) => {console.log(err)
+            io.emit("connectPort", false);
+            loggerErreur("Port", err.message);
+            io.emit('erreur', err);
+        });
+        
+    }
+
+
+    initSerialPort(choixPort){
         if(this.port == null){
             this.port = new serialPort(choixPort,{baudRate:9600, autoOpen:false});
             this.parser = new Readline("\n");
-
+            this.parser.on('data', (data) => {
+                try{
+                    JSON.parse(data);
+                }
+                catch(err){
+                    console.log(data);
+                }
+                this.setJson(data);                                
+            });
             this.port.pipe(this.parser);
             this.port.on('close', () => {
                 io.emit('connectPort', false);
                 this.port = null;
             });
 
-            io.emit('connectPort', false);
+            //io.emit('connectPort', false);
         }else if(!this.isOpen()){
             this.port = null;
         }
@@ -73,22 +95,28 @@ class Arduino{
             this.port.open((err) => {
                 if(err){
                     this.port = null;
-                    reject("Connection rate path(" + choixPort + ")");
+                    reject("Connection echec port(" + choixPort + ")");
                 }else{
                     // Plusieur rajout event 'data' ??
-                    this.parser.on('data', (data) => {
-                        try{
-                            JSON.parse(data);
-                        }
-                        catch(err){
-                            console.log(data);
-                        }
-                        this.setJson(data);                                
-                    });
-                    resolve(this.eventEmitter);
+                    resolve();
                 }
             });
         });
+    }
+
+    close(){
+        return new Promise((resolve, reject) => {
+            this.port.close((err) => {
+            if(err){
+                console.log("Erreur fermeture port");
+                reject(err);
+            }else{
+                console.log("Port is close");
+            }
+            
+            this.port = null;
+            resolve();
+        })});
     }
 
     isOpen(){
@@ -103,8 +131,12 @@ class Arduino{
         });
         this.modifParametre.push([label, dataJson]);
         
-        this.port.write(label + "\n");
-        this.port.write(dataJson + "\n");
+        try{
+            this.port.write(label + "\n");
+            this.port.write(dataJson + "\n");
+        }catch(e){
+            // Erreur quand fermeture du port
+        }
     }
 
     parseData(dataBrut){

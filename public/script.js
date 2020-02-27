@@ -104,6 +104,10 @@ function bindEvent(){
 
         socket.emit('dureeActivation', $('.dureeActivation5J').text());
     });
+
+    $('.closePort').click(() => {
+        socket.emit('closePort');
+    })
 }
 
 function calculActivation(nb){
