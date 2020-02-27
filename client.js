@@ -35,9 +35,9 @@ class Client{
 
     static newConnection(socket){
         if(Client.arduino.isOpen()){
-            io.emit("connectPort", true);
-            // TODO emit dataJson dernier Json
-            Client.arduino.emitJson();
+            socket.emit("connectPort", true);
+            // TODO emit dataJson dernier Json Uniquement a se utilisateur
+            //Client.arduino.emitJson();
         }
         
         socket.on('reqListPort', () => {
@@ -51,38 +51,12 @@ class Client{
             });
         });           
         
+        socket.on('closePort', () =>{
+            Client.arduino.close();
+        })
+
         socket.on('choixPort', (choixPort) => {
-            Client.arduino.connect(choixPort)
-                .then((etatPort) => {
-                    if(Client.eventArduino == null){
-                        Client.eventArduino = etatPort;
-                    
-                        Client.eventArduino.on('connectPort', (etatPort) => {
-                            io.emit('connectPort', false);
-                            io.emit('erreur', "Port fermer, choissisez un port");
-                        });
-
-                        // EventListener quand new dataJson emit to client
-                        Client.eventArduino.on('dataJson', (valJson) =>{
-                            io.emit('dataJson', valJson);
-                        });
-
-                        Client.eventArduino.on('erreur', (err) => {
-                            loggerErreur.error({label:"Port on erreur", message:err});
-                            io.emit('erreur', err);
-                        });
-
-                        Client.arduino.emitJson();
-
-                        io.emit("connectPort", true);
-                    }
-
-                })
-                .catch((err) => {
-                    io.emit("connectPort", false);
-                    loggerErreur("Port", err.message);
-                    io.emit('erreur', err);
-                });
+            Client.arduino.connect(choixPort)  
             //setTimeout(()=>console.log(port.isOpen),5000);
         });
 
