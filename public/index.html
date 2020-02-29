@@ -17,15 +17,6 @@
 
   <link rel="stylesheet" href="asset/bootstrap-4.3.1/css/bootstrap.min.css">
   <script src="asset/bootstrap-4.3.1/js/bootstrap.min.js"></script>
-
-  <style>  
-    #consigneAir {
-      margin: 20px;
-      width: 200px;
-      height: 200px;
-      position: relative;
-    }
-  </style>
 </head>
 
 <body class="application application-offset">
@@ -36,7 +27,7 @@
     <!-- Sidenav -->
     <div class="sidenav" id="sidenav-main">
       <!-- Sidenav header -->
-      <div class="sidenav-header d-flex align-items-center">
+      <div class="sidenav-header d-flex align-items-center show">
         <a class="navbar-brand" href="index.html">
           <img src="assets/img/brand/white.png" class="navbar-brand-img" alt="...">
         </a>
@@ -58,25 +49,9 @@
           <span class="btn-inner--icon d-block"><i class="far fa-home fa-2x"></i></span>
           <span class="btn-inner--icon d-block pt-2">Accueil</span>
         </a>
-        <a href="#" class="btn btn-square text-sm">
+        <a href="paramArduino" class="btn btn-square text-sm">
           <span class="btn-inner--icon d-block"><i class="far fa-project-diagram fa-2x"></i></span>
-          <span class="btn-inner--icon d-block pt-2">Informations</span>
-        </a>
-        <a href="#" class="btn btn-square text-sm">
-          <span class="btn-inner--icon d-block"><i class="far fa-tasks fa-2x"></i></span>
-          <span class="btn-inner--icon d-block pt-2">Tâches</span>
-        </a>
-        <a href="#" class="btn btn-square text-sm">
-          <span class="btn-inner--icon d-block"><i class="far fa-columns fa-2x"></i></span>
-          <span class="btn-inner--icon d-block pt-2">A voir</span>
-        </a>
-        <a href="#" class="btn btn-square text-sm">
-          <span class="btn-inner--icon d-block"><i class="far fa-users-cog fa-2x"></i></span>
-          <span class="btn-inner--icon d-block pt-2">A voir</span>
-        </a>
-        <a href="#" class="btn btn-square text-sm">
-          <span class="btn-inner--icon d-block"><i class="far fa-user-ninja fa-2x"></i></span>
-          <span class="btn-inner--icon d-block pt-2">Admin</span>
+          <span class="btn-inner--icon d-block pt-2">Parametrage</span>
         </a>
       </div>
     </div>
@@ -108,8 +83,7 @@
             <div class="card card-fluid">
               <div class="card-body">
                 <div class="card-body text-center d-flex flex-column justify-content-center">
-                  <h5 class="mb-4" style="margin-top: -5px;">Infors
-                    mations</h5>
+                  <h5 class="mb-4" style="margin-top: -5px;">Informations</h5>
                 </div>
                 <div class="row align-items-center">
                   <div class="col">
@@ -190,19 +164,19 @@
 
           <div class="col-xl-4 col-md-6">
             <div class="card card-fluid">
-              <div class="card-body text-center d-flex flex-column justify-content-center">
-                <h5 class="mb-4" style="margin-top: 5px;">Température</h5>
-                <div id="consigneAir">
-                </div>
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                <h5 class="mb-4" style="margin-top: 5px;">Temperature</h5>
+              <div id="consigneAir" class="progress-circle progress-lg mx-auto" id="progress-5" data-progress="100" data-text="17°C"
+              data-textclass="h1 consigneAir" data-color="info"></div>
                 <!-- Cercle -->
                 <div class="d-flex mt-4">
                   <div class="col">
-                    <button id="consigneAir--" type="button" class="btn btn-danger">
+                    <button id="consigneAirDown" type="button" class="btn btn-danger">
                       -
                     </button>
                   </div>
                   <div class="col">
-                    <button id="consigneAir++" type="button" class="btn btn-success">
+                    <button id="consigneAirUp" type="button" class="btn btn-success">
                       +
                     </button>
                   </div>
@@ -235,7 +209,7 @@
                     </span>
                   </div>
                 </div>
-
+                
                 <!-- Fin information -->
               </div>
             </div>
@@ -247,16 +221,16 @@
             <div class="card card-fluid">
               <div class="card-body text-center d-flex flex-column justify-content-center">
                 <h5 class="mb-4" style="margin-top: 20px;">Humidité</h5>
-                <div id="consigneHum" class="progress-circle progress-lg mx-auto" id="progress-5" data-progress="60" data-text="90%"
+                <div id="consigneHum" class="progress-circle progress-lg mx-auto" id="progress-5" data-progress="100" data-text="90%"
                   data-textclass="h1 consigneHum" data-color="info"></div>
                 <div class="d-flex mt-4">
                   <div class="col">
-                    <button id="consigneHum--" type="button" class="btn btn-danger">
+                    <button id="consigneHumDown" type="button" class="btn btn-danger">
                       -
                     </button>
                   </div>
                   <div class="col">
-                    <button type="button" class="btn btn-success">
+                    <button id="consigneHumUp" type="button" class="btn btn-success">
                       +
                     </button>
                   </div>

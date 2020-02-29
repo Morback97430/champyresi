@@ -5,8 +5,6 @@ let consigneHumidite = "";
 
 $(document).ready(() => {
 
-rajoutComponent();
-
 bindEvent();
 
 socket = io();
@@ -34,13 +32,15 @@ socket.on('connectPort', (isOpen) => {
     }
 });
 
-socket.on("erreur", (err) =>
+socket.on("erreur", affichageErreur);
+
+
+function affichageErreur(err)
 {
     $('.messageErreur').text(err);
     $('.erreur').fadeToggle().delay(5000).fadeToggle();
     console.log(err);
-});
-
+};
 
 // Première demande de liste Port
 socket.emit('reqListPort');
@@ -66,24 +66,53 @@ function bindEvent(){
 
     let pasAir = 0.5;
 
-    $('#consigneAir--').click(()=>{
-        socket.emit('newConsigneAir', $('#consigneAir').val() - pasAir);
-        initConsigne();
+    $('#consigneAirDown').click(()=>{
+        let textAir = $('#consigneAir').text();
+
+        let valAir = Number(textAir.substring(0, textAir.length - 2));
+
+        if((valAir - 0.5) > 10){
+            socket.emit('newConsigneAir', valAir - 0.5);
+        }else{
+            affichageErreur("Consigne Air demandé trop bas");
+        }
     });
 
-    $('#consigneAir++').click(()=>{
-        socket.emit('newConsigneAir', ++$('#consigneAir').val() + pasAir);
-        initConsigne();
+    
+    $('#consigneAirUp').click(()=>{
+        let textAir = $('#consigneAir').text();
+        
+        let valAir = Number(textAir.substring(0, textAir.length - 2)); 
+        
+        if((valAir + 0.5) < 40){
+            socket.emit('newConsigneAir', valAir + 0.5);
+        }else{
+            affichageErreur("Consigne humidite trop bas");
+        }
     });
 
-    $('#consigneHum--').click(()=>{
-        socket.emit('newConsigneHum', --$('#consigneHum').val());
-        initConsigne();
+    $('#consigneHumDown').click(()=>{
+        let textHum = $('#consigneHum').text();
+
+        let valHum = Number(textHum.substring(0, textHum.length - 1)); 
+
+        if((valHum - 0.5) > 60){
+            socket.emit('newConsigneHum', valHum - 0.5);
+        }else{
+            affichageErreur("Consigne humidite trop bas"); 
+        }
     });
 
-    $('#consigneHum++').click(()=>{
-        socket.emit('newConsigneHum', ++$('#consigneHum').val());
-        initConsigne();
+    $('#consigneHumUp').click(()=>{
+        let textHum = $('#consigneHum').text();
+
+        let valHum = Number(textHum.substring(0, textHum.length - 1)); 
+
+        if((valHum + 0.5) < 100){
+            socket.emit('newConsigneHum', valHum + 0.5);
+        }else{
+            affichageErreur("Consigne humidite trop haute"); 
+        }
     });    
 
     $('.gestionJour').click(() => {
@@ -120,7 +149,6 @@ function calculActivation(nb){
 function setAppChampi(data){
     $('.temperatureAir').text(arrondi(data.temperatureAir));
     
-    console.log($('.consigneAir').data("text"));
     $('.consigneAir').text(arrondi(data.consigneAir) + "°C");
     // $('.consigneAir').attr('data-progress', (arrondi(data.consigneAir) - 10) * 100 / 30);
 
@@ -142,27 +170,4 @@ function setAppChampi(data){
     $('.suiviSousProcess').text(data.suiviSousProcess);
 }
 
-function initConsigne()
-{
-    $('#consigneAir').val("");
-    $('#consigneHum').val("");
-    $('#modifConsigneAir').val("");
-    $('#modifConsigneHum').val("");   
-}
-
 const arrondi = (val) => Math.round(val * 100) / 100;
-
-const rajoutComponent = () => 
-{
-
-    var barAir = new ProgressBar.Circle(consigneAir, {
-        strokeWidth: 6,
-        easing: 'easeInOut',
-        duration: 1400,
-        color: '#FFEA82',
-        trailColor: '#eee',
-        trailWidth: 1,
-        svgStyle: null
-      });
-      
-}

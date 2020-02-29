@@ -95,14 +95,14 @@ class Client{
         });
 
         socket.on("newConsigneAir", (consigneAir) => {
-            consigneAir.replace(",",".");
+            consigneAir.toString().replace(",",".");
             if(consigneAir == parseFloat(consigneAir)){
                 Client.arduino.envoieData("mA", {cA:consigneAir});
             }
         });
 
         socket.on("newConsigneHum", (consigneHum) => {
-            consigneHum.replace(",",".");
+            consigneHum.toString().replace(",",".");
             if(consigneHum == parseFloat(consigneHum)){
                 Client.arduino.envoieData("mH",{cH:consigneHum});
             }
