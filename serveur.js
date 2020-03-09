@@ -38,17 +38,18 @@ router.get('/', (req, res) => {
   res.type('html');
   let renderedViews = ""
   // res.sendFile(path.join(__dirname + '/public', 'paramArduino.html'));
-  app.render(path.join(__dirname + '/public', 'header'),
+
+  app.render(path.join(__dirname + '/public', 'header'), 
     (err, html) => {
       renderedViews += html;
-      app.render(path.join(__dirname + '/public', 'home'), 
-        (err, html) => {
-          renderedViews += html;
-          res.send(renderedViews)
-        }
-      );
+      app.render(path.join(__dirname + '/public', 'index'), 
+      (err, html) => {
+        renderedViews += html;
+        res.send(renderedViews)
+      }
+    );
     }
-  )
+  );
 });
 
 router.get('/paramArduino', (req, res) =>

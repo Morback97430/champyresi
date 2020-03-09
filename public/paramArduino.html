@@ -1,83 +1,359 @@
 <body>
-    <div class='container '>
-
-    <div class='row'>
-        <div class='col'>
-            <div class='row'>
-                <h3>Gestion Temperature</h3>
-            </div>
-    
-            <div class='row'>
-                <p class="col">Capteur Air : <span id="etalonageAir">NC</span></p>
-                <button type="button" 
+        <div class="container">
+              <div class="choixPort row">
+      
+                <h3>Port</h3>
+                <div class="form-group">
+                  <select class="form-control" id="listPort">
+      
+                  </select>
+                </div>
+                <button id="choixPort" type="button" class="btn btn-light">Choix du Port</button> 
+              </div>
+      
+              <div class="appChampi d-none">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="row">
+                        <table class="table-bordered text-center">
+                            <thead>
+                              <tr>
+                                <th>Capteur</th>
+                                <th>Valeur mesurée</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>Temperature Air</th>
+                                <th class="temperatureAir">NC</th>
+            
+                              </tr>
+                              <tr>
+                                <th>Temperature Sonde Seche </th>
+                                <th class ="moySec">NC</th>
+                              </tr>
+                              <tr>
+                                <th>Temperature Sonde Humide</th>
+                                <th class="moyHum">NC</th>
+                              </tr>
+                              <tr>
+                                <th>Taux Humidite</th>
+                                <th class="tauxHumidite">NC</th>
+                              </tr>
+                              <tr>
+                                <th>Coefficient</th>
+                                <th class="coeff">NC</th>
+                              </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                    <div class="row">
+                      <table class="table-bordered text-center">
+                        <tbody>
+                          <tr>
+                            <th>Etat</th> 
+                            <th class="suiviProcess">NC</th>
+                          </tr>
+                          <tr>
+                            <th>Sous Etat</th>
+                            <th class="suiviSousProcess">NC</th>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+      
+                  </div>
+      
+                  <div class='col'>
+                    <div class='row'>
+                      <div class='col'>
+                          <table class="table-bordered text-center">
+                              <thead>
+                                <tr>
+                                  <th>Brume</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>Temps arrosage eau</th>
+                                  <th class="tempsOuvertureBrume">NC</th>
+                                </tr>
+                                <tr>
+                                  <th>Temps Arret</th>
+                                  <th class="tempsFermetureBrume">NC</th>
+                                </tr>
+                              </tbody>
+                            </table>
+                      </div>
+                        
+                      <div class='col'>
+                        <div class='row'>
+                          <table class="table-bordered text-center">
+                            <thead>
+                              <tr>
+                                <th>Desumidification</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>Temps Desu</th>
+                                <th class="tempsDeshum">NC</th>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+      
+                          
+                      </div>
+                    </div>
+      
+                    <div class='row'>
+                      <div class='col'>
+                      <table class="table-bordered text-center">
+                        <thead>
+                          <tr>
+                            <th>Nombre de jour</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th class="nbJour">NC</th>
+                            <th><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changementJour">
+                                Changer Jour
+                                </button>
+                              </th>
+                          </tr>
+                        </tbody>
+                      </table> 
+                      </div>
+                    </div>
+      
+                    <div class='row'>
+                      <div class ='col'>
+                          <table class="table-bordered text-center">
+                            <thead>
+                                <tr>
+                                  <th>Gestion Brume avant 5ème jours</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>Nombre d'activation par jour</th>
+                                  <th class="nbActivation5J">NC</th>
+                                </tr>
+                                <tr>
+                                    <th>Durée entre activation</th>
+                                    <th class="dureeActivation5J">NC</th>
+                                </tr>
+            
+                                <tr>
+                                  <th>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#gestionBrume5J">
+                                        Changer Nombre d'activation
+                                    </button>
+                                  </th>
+                                </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                    </div>
+      
+                  </div>
+      
+                </div>
+      
+      
+                <div class='row'>
+                  <table class="table-bordered text-center">
+                    <thead>
+                      <tr>
+                        <th>Configuration</th>
+                        <th>Valeur Actuel</th>
+                        <th>Valeur Demandée</th>
+                        <th>Validation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>Consigne Air</th>
+                        <th class="consigneAir">NC</th>
+                        <th>
+                          <div class="form-group">
+                            <input id="consigneAir" type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
+                          </div>
+                        </th>
+                        <th><button id="envoyerConsigneAir" type="button" class="btn btn-light ">Envoyer Consigne Air</button></th>
+                      </tr>
+                      <tr>
+                        <th>Consigne Humide</th>
+                        <th class="consigneHum">NC</th>
+                        <th>
+                          <div class="form-group">
+                            <input id="consigneHum" type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
+                          </div>
+                        </th>
+                        <th><button id="envoyerConsigneHum" type="button" class="btn btn-light ">Envoyer Consigne Hum</button></th>
+                      </tr>
+                      <tr>
+                        <th>Vitesse Modif Air</th>
+                        <th class="modifConsigneAir">NC</th>
+                        <th>
+                          <div class="form-group">
+                            <input id="modifConsigneAir" type="text" class="form-control form-control text-center" placeholder="Saisir la valeur">
+                          </div>
+                        </th>
+                        <th><button id="envoyerModifAir" type="button" class="btn btn-light ">Envoyer ModifAir</button></th>
+                      </tr>
+                      <tr>
+                        <th>Vitesse Modif Hum</th>
+                        <th class="modifConsigneHum">NC</th>
+                        <th>
+                          <div class="form-group">
+                            <input id="modifConsigneHum" type="text" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+                          </div>
+                        </th>
+                        <th><button id="envoyerModifHum" type="button" class="btn btn-light ">Envoyer ModifHum</button></th>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+      
+                <div class='row'>
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='row'>
+                                <h3>Gestion Temperature</h3>
+                            </div>
+                            
+                            <div class='row'>
+                                <p class="col">Capteur Air : <span id="etalonageAir">NC</span></p>
+                                <button type="button" 
+                                class="btn btn-primary col" 
+                                data-toggle="modal" 
+                                data-target="#changeEtalonageAir">
+                                Air
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class='col'>
+                            <div class='row'>
+                                <h3>Gestion Humidite</h3>
+                            </div>
+                        <div class='row'>
+                            <p class='col'>Capteur Sec : <span id ="etalonageSec">NC</span></p>
+                              <button type="button" 
+                              class="btn btn-primary col" 
+                              data-toggle="modal" 
+                              data-target="#changeEtalonageSec">
+                              Sec
+                              </button>
+                        </div>
+                    <div class='row'>
+                      <p class='col'>Capteur Hum : <span id ="etalonageHum">NC</span></p>
+                        <button type="button" 
                         class="btn btn-primary col" 
                         data-toggle="modal" 
-                        data-target="#changeEtalonageAir">
-                    Air
-                </button>
+                        data-target="#changeEtalonageHum">
+                        Hum
+                      </button>
+                    </div>
+                </div>
             </div>
+          </div>
+      </body>
+      
+      
+      <!-- Modal Jour-->
+      <div class="modal fade" id="changementJour" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Saisi Jour</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input id="saisiJour" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary gestionJour" data-dismiss="modal">Save changes</button>
+          </div>
         </div>
+      </div>
+      </div>
+      
+      <!-- Modal Nombre de brume-->
+      <div class="modal fade" id="gestionBrume5J" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Gestion Brume 5 Jours</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="dureeActivation">Duree Entre activation</label>
+              <input id="dureeActivation" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+            </div>
+            <div class="form-group">
+                <label for="nbActivation">Nombre d'activation par jour</label>
+                <input id="nbActivation" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary gestionActivationBrume" data-dismiss="modal">Save changes</button>
+          </div>
+        </div>
+      </div>
+      </div>
+      
+      <div class='container '>
+          
         
+      </div>
+</div>
 
-        <div class='col'>
-            <div class='row'>
-                <h3>Gestion Humidite</h3>
-            </div>
-            <div class='row'>
-                <p class='col'>Capteur Sec : <span id ="etalonageSec">NC</span></p>
-                <button type="button" 
-                class="btn btn-primary col" 
-                data-toggle="modal" 
-                data-target="#changeEtalonageSec">
-            Sec
-        </button>
-            </div>
-            <div class='row'>
-                <p class='col'>Capteur Hum : <span id ="etalonageHum">NC</span></p>
-                <button type="button" 
-                    class="btn btn-primary col" 
-                    data-toggle="modal" 
-                    data-target="#changeEtalonageHum">
-                Hum
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <hr>
+  <hr>
 
-    <div class='row  justify-content-center'>
-        <div class='col-3'>
-            <a href="/"><button type="bouton" class="btn btn-primary"><span>Accueil</span></button></a>
-        </div>
-    </div>
+  <div class='row  justify-content-center'>
+      <div class='col-3'>
+          <a href="/"><button type="bouton" class="btn btn-primary"><span>Accueil</span></button></a>
+      </div>
+  </div>
 
-    </div>
+</div>
 
-
-
-    <script src="/paramArduino.js"></script>
+<script src="/paramArduino.js"></script>
 </body>
 </html>
 
 <div class="modal fade" id="changeEtalonageAir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Etalonage Air</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-            <input id="valEtalonageAir" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Etalonage Air</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary etalonageAir" data-dismiss="modal">Save changes</button>
-        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input id="valEtalonageAir" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary etalonageAir" data-dismiss="modal">Save changes</button>
+            </div>
         </div>
     </div>
 </div>
@@ -85,43 +361,43 @@
 <div class="modal fade" id="changeEtalonageSec" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Etalonage Sec</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-            <input id="valEtalonageSec" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Etalonage Sec</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary etalonageSec" data-dismiss="modal">Save changes</button>
-        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input id="valEtalonageSec" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary etalonageSec" data-dismiss="modal">Save changes</button>
+            </div>
         </div>
     </div>
 </div>
-    
+
 <div class="modal fade" id="changeEtalonageHum" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Etalonage Hum</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-            <input id="valEtalonageHum" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Etalonage Hum</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary etalonageHum" data-dismiss="modal">Save changes</button>
-        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input id="valEtalonageHum" type="number" class="form-control form-control text-center" placeholder="Saisir la valeur ">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary etalonageHum" data-dismiss="modal">Save changes</button>
+            </div>
         </div>
     </div>
 </div>
