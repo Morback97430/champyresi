@@ -39,10 +39,15 @@ router.get('/', (req, res) => {
   let renderedViews = ""
   // res.sendFile(path.join(__dirname + '/public', 'paramArduino.html'));
 
-  app.render(path.join(__dirname + '/public', 'index'), 
+  app.render(path.join(__dirname + '/public', 'header'), 
     (err, html) => {
       renderedViews += html;
-      res.send(renderedViews)
+      app.render(path.join(__dirname + '/public', 'index'), 
+      (err, html) => {
+        renderedViews += html;
+        res.send(renderedViews)
+      }
+    );
     }
   );
 });
