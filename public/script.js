@@ -10,7 +10,6 @@ bindEvent();
 socket = io();
 
 socket.on('dataJson', (data) => {
-    console.log(data);
     setAppChampi(data);
 });
 
@@ -37,10 +36,8 @@ socket.on("erreur", affichageErreur);
 
 function affichageErreur(err)
 {
-    $('.messageErreur').text(err);
-    $('.erreur').fadeToggle().delay(5000).fadeToggle();
     console.log(err);
-};
+}
 
 // Première demande de liste Port
 socket.emit('reqListPort');
@@ -68,7 +65,6 @@ function bindEvent(){
 
     $('#consigneAirDown').click(()=>{
         let textAir = $('#consigneAir').text();
-
         let valAir = Number(textAir.substring(0, textAir.length - 2));
 
         if((valAir - 0.5) > 10){
@@ -156,6 +152,7 @@ function setAppChampi(data){
     $('.consigneAir').text(arrondi(data.consigneAir) + "°C");
     // $('.consigneAir').attr('data-progress', (arrondi(data.consigneAir) - 10) * 100 / 30);
 
+    
     $('.modifConsigneAir').text(data.modifConsigneAir);
     $('.tauxHumidite').text(arrondi(data.tauxHumidite));
     
@@ -172,6 +169,39 @@ function setAppChampi(data){
     $('.nbJour').text(data.nbJour);
     $('.suiviProcess').text(data.suiviProcess);
     $('.suiviSousProcess').text(data.suiviSousProcess);
+
+    updateVoyantTemperature(data);
+    updateVoyantHumidite(data);
 }
 
 const arrondi = (val) => Math.round(val * 100) / 100;
+
+const updateVoyantTemperature = (data) => {
+    let deltaTemp = data.consigneAir - data.temperatureAir;
+
+    if(deltaTemp < 1 && deltaTemp > -1){
+        $('.voyantMesure').removeClass("bg-danger bg-warning")
+            .addClass("bg-sucess");
+    }else if(deltaTemp < 1.5 && deltaTemp > -1.5){
+        $('.voyantMesure').removeClass("bg-danger bg-success")
+            .addClass("bg-warning");
+    }else{
+        $('.voyantMesure').removeClass("bg-warning bg-success")
+        .addClass("bg-danger");
+    }
+}
+
+const updateVoyantHumidite = (data) => {
+    let deltaHum = data.consigneHum - data.tauxHumidite;
+
+    if(deltaHum < 1 && deltaHum > -1){
+        $('.voyantHumidite').removeClass("bg-danger bg-warning")
+            .addClass("bg-sucess");
+    }else if(deltaHum < 2 && deltaHum > -2){
+        $('.voyantHumidite').removeClass("bg-danger bg-success")
+            .addClass("bg-warning");
+    }else{
+        $('.voyantHumidite').removeClass("bg-warning bg-success")
+            .addClass("bg-danger");
+    }
+}

@@ -65,7 +65,7 @@ class Arduino{
 
     initSerialPort(choixPort){
         if(this.port == null){
-            this.port = new serialPort(choixPort,{baudRate:9600, autoOpen:false});
+            this.port = new serialPort(choixPort,{baudRate:1000000, autoOpen:false});
             this.parser = new Readline("\n");
             this.parser.on('data', (data) => {
                 try{

@@ -1,5 +1,5 @@
 // version Arduino
-String versionArduino = "tag 1.45";
+String versionArduino = "tag 2.0";
 
 #include <ArduinoJson.h> 
 
@@ -112,7 +112,7 @@ String suiviSousProcess = "";
 
 void setup() {  
   // initialisation de l'affichage et du mode console      
-  Serial.begin(9600);             // préparation du moniteur série 
+  Serial.begin(1000000);             // préparation du moniteur série 
 
   // Setup Relay
   pinMode(pinAir, OUTPUT);
