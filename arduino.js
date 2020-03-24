@@ -139,7 +139,6 @@ class Arduino{
     }
 }
 
-
 let five = require('johnny-five');
 let board = new five.Board(
     { repl:false}

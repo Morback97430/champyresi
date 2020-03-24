@@ -1,7 +1,6 @@
-const {hToMs, delay} = require('./util/utilitaire');
+const {hToMs, delay} = require('../util/utilitaire');
 
 const arduino = require('./arduino');
-
 
 // Variable Champignon
 let consigneAir = 17;
@@ -26,7 +25,7 @@ const launch = async () => {
     console.log("Fin launch");
 }
 
-const launchApp = () => {
+const launchApp = async () => {
     await gestionTemperature();
 
     // attente entre le procédé
@@ -57,7 +56,7 @@ function gestionTemperature(){
                 console.log("Problème valeur temperature Air (A0)");
                 console.log(err);
             });
-        console.log(temperatureAir);
+        console.log("Temperature Air mesurée : " + temperatureAir);
     
         setEtape("Gestion Temperature", "Regulation de l'air en cours");
         await regulateurAir(temperatureAir, consigneAir);
