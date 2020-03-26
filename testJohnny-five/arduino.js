@@ -1,17 +1,19 @@
 const {calMoy, delay} = require('../util/utilitaire');
 
 let five = require('johnny-five');
-let board = new five.Board(
-    { repl:false}
-    );
+let board = null;
 
 const arduino = {
     listPort : () => {
         return serialPort.list();
     },
     
-    connectBoard : () => {        
+    connectBoard : (port) => {        
         return new Promise((resolve, reject) => {
+            board = new five.Board(
+                {   port:port,
+                    repl:false}
+                );
             board.on("ready", () => {
                 initPin();
                 resolve();
@@ -32,17 +34,23 @@ function initPin(){
     // Capteur Air
     listPin["A0"] = new five.Pin("A0");
     
-    // Capteur Sec
+    // Capteur Humide
     listPin["A1"] = new five.Pin("A1");
 
-    // Capteur Humide
+    // Capteur Sec
     listPin["A2"] = new five.Pin("A2");
 
     // Vanne Fermeture
-    listPin['25'] = new five.Pin(25);
+    listPin[25] = new five.Pin(25);
 
     // Vanne Switch, combine avec la vanneAirF cela permet d'ouvrir
-    listPin['27'] = new five.Pin(27);
+    listPin[27] = new five.Pin(27);
+
+    // Ventilo Capteur
+    listPin[7] = new five.Pin(7);
+
+    // Met en etat fermer apr défault
+    arduino.turnHigh([7, 25, 27]);
 }
 
 arduino.getTemperature = (pin) =>{
@@ -78,6 +86,9 @@ arduino.getTemperature = (pin) =>{
             reject("Trop de mesure incorrecte : " + listValeur.length + " sur " + NBMESURE);
         }
 
+        // tri tableau
+        listValeur.sort((a, b) => a - b);
+        
         //purge
         const BORDREDUIT = 5;
         let listValeurPurger = listValeur.slice(BORDREDUIT, listValeur.length - BORDREDUIT);
@@ -110,15 +121,23 @@ async function getValAnalogique(pin){
 }
 
 arduino.turnHigh = (pins) => {
-    pins.forEach(pin => {
-        listPin[pin].high();
-    });
+    if(Array.isArray(pins)){
+        pins.forEach(pin => {
+            listPin[pin].high();
+        });
+    }else{
+        listPin[pins].high();
+    }
 }
 
 arduino.turnLow = (pins) => {
-    pins.forEach(pin => {
-        listPin[pin].low();
-    });
+    if(Array.isArray(pins)){
+        pins.forEach(pin => {
+            listPin[pin].low();
+        });
+    }else{
+        listPin[pins].low();
+    }
 }
 
 module.exports = arduino;
