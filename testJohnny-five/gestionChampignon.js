@@ -21,10 +21,9 @@ const launch = async () => {
     launchCron();
 
     await launchApp();
-
-    console.log("Fin launch");
 }
 
+let continueGestion = true;
 const launchApp = async () => {
     await gestionTemperature();
 
@@ -33,7 +32,11 @@ const launchApp = async () => {
     }
 
     // attente entre le procédé
-    await delay(5, "minute"); 
+    await delay(5, "minute");
+
+    if(continueGestion){
+        launchApp(); // refaire le traitement
+    }
 }
 
 module.exports = {launch};
@@ -153,9 +156,13 @@ function gestionHumidite(){
         let tempSecAndHum = await mesureSecAndHum();
         arduino.turnHigh(7);
         
+        setEtape("Gestion Humidite", "Calcul Taux Humidite");
         let tauxHumidite = calculHumidite(tempSecAndHum);
 
+        setEtape("Gestion Humidite", "Regulation de l'humidite en cours");
         await regulateurHumidite(tauxHumidite);
+
+        resolve();
     });
 }
 
@@ -176,7 +183,8 @@ function regulateurHumidite(tauxHumidite){
                 tempsFermetureBrume = 105;
             }
 
-            await periodeBrume(tempsFermetureBrume); // TODO
+            setEtape("Gestion Humidite", "Lancement Brume : " + tempsFermetureBrume + " secondes");
+            await periodeBrume(tempsFermetureBrume);
         }else{
             let timerDesHum = 0;
             if(deltaHum < -3){
@@ -189,19 +197,35 @@ function regulateurHumidite(tauxHumidite){
                 timerDesHum = 105;
             }
 
-            // TODO
-            activeDeshum();
-            await delay(timerDesHum);
-            desactiveDesHum();
-        }        
+            setEtape("Gestion Humidite", "Lancement Deshum: " + timerDesHum + " secondes");
+            arduino.turnLow(6);
+            await delay(timerDesHum, "seconde");
+            arduino.turnHigh(6);
+        }
+        
+        resolve();
+    });
+}
+
+function periodeBrume(tempsFermetureBrume){
+    return new Promise(async (resolve,reject) => {
+        let continueMesure = true;
+        delay(10, "minute").then(() => {
+            continueMesure = false;
+        });
+
+        while(continueMesure){
+            arduino.turnLow(31);
+            await delay(15, "seconde");
+            arduino.turnHigh(31);
+            await delay(tempsFermetureBrume, "seconde");
+        }
     });
 }
 
 function calculHumidite(tempSecAndHum){
     let tempSec = tempSecAndHum.sec;
     let tempHum = tempSecAndHum.hum;
-
-    let tauxHumidite = 0;
 
     let pressSaturanteSec = calculPression(tempSecAndHum.sec);
     let pressSaturanteHum = calculPression(tempSecAndHum.hum);
@@ -252,6 +276,8 @@ function mesureSecAndHum(){
 
         let totalSec = []; // temp Sec = moyenne totalSec
         let tempSec = 0;
+
+        let totalHum = [];
         let tempHum = 100; // temp hum = valeur la plus basse
 
         while(continueMesure){
@@ -263,14 +289,12 @@ function mesureSecAndHum(){
                 let tabTemp = await Promise.all([arduino.getTemperature("A2"), arduino.getTemperature("A1")]);
                 
                 totalSec.push(tabTemp[0]);
-
-                if(tabTemp[1] < tempHum){
-                    tempHum = tabTemp[1];
-                }
+                totalHum.push(tabTemp[1]);
             }
         }
 
-        tempSec =  calMoy(totalSec);
+        tempSec = calMoy(totalSec);
+        tempHum = calMoy(totalHum);
 
         console.log(tempSec);
         console.log(tempHum);

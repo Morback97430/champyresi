@@ -49,8 +49,14 @@ function initPin(){
     // Ventilo Capteur
     listPin[7] = new five.Pin(7);
 
+    // Brume
+    listPin[31] = new five.Pin(31);
+
+    // deshum
+    listPin[6] = new five.Pin(6);
+
     // Met en etat fermer apr défault
-    arduino.turnHigh([7, 25, 27]);
+    arduino.turnHigh([7, 25, 27, 31, 6]);
 }
 
 arduino.getTemperature = (pin) =>{
@@ -60,7 +66,7 @@ arduino.getTemperature = (pin) =>{
 
     let listValeur = [];
 
-    console.log("Temps estimé relever de temperature => " +  (WAITTIME * NBMESURE / 1000) + " secondes");
+    //console.log("Temps estimé relever de temperature => " +  (WAITTIME * NBMESURE / 1000) + " secondes");
 
     return new Promise(async (resolve, reject) => {
         for(let nbMesure = 0; nbMesure < NBMESURE; nbMesure++){
