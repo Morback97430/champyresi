@@ -148,13 +148,6 @@ void loop(){
     tauxHumidite =  calculHumidite(); 
       
     regulateurHumidite();
-  }else{
-    if(millis() - intervalleActivation > dureeActivationBrume){
-      suiviProcess = "Periode Brume";
-      suiviSousProcess = "";
-      periodeBrume();
-      intervalleActivation = millis();
-    }
   }
 
   // Timer entre les mesures

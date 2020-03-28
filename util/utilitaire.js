@@ -12,17 +12,14 @@ exports.hToMs = (h) => {
 // attente en milliseconde
 exports.delay = (duree, unite = "millis") => {
     switch(unite){
-        case "minute": return new Promise((resolve, reject) => {
-            setTimeout(resolve, duree * 60 * 1000);
-        });
+        case "minute": duree = duree * 60 * 1000; 
+        break;
 
-        case "seconde": return new Promise((resolve, reject) => {
-            setTimeout(resolve, duree * 1000);
-        });
-
-        default: return new Promise((resolve, reject) => {
-            setTimeout(resolve, duree);
-        });
+        case "seconde": duree = duree * 1000; 
+        break;
     }
 
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, duree);
+    });
 }

@@ -158,6 +158,7 @@ function gestionHumidite(){
         
         setEtape("Gestion Humidite", "Calcul Taux Humidite");
         let tauxHumidite = calculHumidite(tempSecAndHum);
+        console.log("Taux Humidite : " + tauxHumidite +  "%");
 
         setEtape("Gestion Humidite", "Regulation de l'humidite en cours");
         await regulateurHumidite(tauxHumidite);
