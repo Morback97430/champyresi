@@ -2,21 +2,53 @@ const {hToMs, delay, calMoy} = require('../util/utilitaire');
 
 const arduino = require('./arduino');
 
+// object envoyer au client
+let dataArduino = {
+    temperatureAir:0,
+    consigneAir:0,
+    modifConsigneAir:0,
+    tauxHumidite:0,
+    consigneHum:0,
+    modifConsigneHum:0,
+    dureeAction:0,
+    coeff:0,
+    etatVanneFroid:0,
+    moySec:0,
+    moyHum:0,
+    tempsDeshum:0,
+    tempsOuvertureBrume:0,
+    tempsFermetureBrume:0,
+    dureeActivationBrume:0,
+    etalonageAir:0,
+    etalonageHum:0,
+    etalonageSec:0,
+    nbJour:0,
+    suiviProcess:"",
+    suiviSousProcess:""
+};
+
 // Variable Champignon
 let consigneAir = 17;
+dataArduino.consigneAir = consigneAir;
+
 let modifConsigneAir = 0.12;
+dataArduino.modifConsigneAir = modifConsigneAir;
 
 let consigneHum = 86;
+dataArduino.consigneHum = consigneHum;
+
 let modifConsigneHum = 0.12;
+dataArduino.modifConsigneHum = modifConsigneHum;
 
 let nbJour = 10;
+dataArduino.nbJour = nbJour;
 
 let etapeEnCour = "Lancement de l'application";
 let detailEtape = "Veuillez patienter";
 
-const launch = async () => {
+const launch = async (port) => {
     // initialisation carte arduino
-    await arduino.connectBoard("COM14");
+    await arduino.connectBoard(port);
     
     launchCron();
 
@@ -34,6 +66,8 @@ const launchApp = async () => {
     // attente entre le procédé
     await delay(5, "minute");
 
+    console.log(dataArduino);
+
     if(continueGestion){
         launchApp(); // refaire le traitement
     }
@@ -44,11 +78,15 @@ module.exports = {launch};
 function launchCron(){
     setInterval(() => {
         consigneAir -= modifConsigneAir;
+        dataArduino.consigneAir = consigneAir;
+
         consigneHum -= modifConsigneHum;
+        dataArduino.consigneHum = consigneHum;
     }, hToMs(12));
 
     setInterval(() => {
         nbJour++;
+        dataArduino.nbJour = nbJour;
     }, hToMs(24));
 
     console.log("Cron lancer");
@@ -66,6 +104,7 @@ function gestionTemperature(){
                 reject("Temperature incorrecte");
             });
         console.log("Temperature Air mesurée : " + temperatureAir);
+        dataArduino.temperatureAir = temperatureAir + dataArduino.etalonageAir;
     
         setEtape("Gestion Temperature", "Regulation de l'air en cours");
         await regulateurAir(temperatureAir, consigneAir);
@@ -77,17 +116,24 @@ function gestionTemperature(){
 function regulateurAir(temp, consigne){
     return new Promise(async (resolve, reject) => {
         let deltaTemp = temp - consigne;
+        dataArduino.coeff = deltaTemp;
         
         let dureeAction = dureeRegulationAir(deltaTemp); // en secondes
+        dataArduino.dureeAction = dureeAction;
     
         if(dureeAction != 0){
             if(deltaTemp > 0){
                 setEtape("Gestion Temperature", "Temperature Air trop haute");
                 await ouvrirVanneAir(dureeAction);
+                dataArduino.etatVanneFroid += dureeAction;
             }else{
                 setEtape("Gestion Temperature", "Temperature Air trop basse");
                 await fermerVanneAir(dureeAction);
+                dataArduino.etatVanneFroid -= dureeAction;
             }
+
+            if(dataArduino.etatVanneFroid < 0) dataArduino.etatVanneFroid = 0;
+            else if(dataArduino.etatVanneFroid > 30) dataArduino.etatVanneFroid = 30;
         }else{
             setEtape("Gestion Temperature", "Temperature Air OK");
         }
@@ -159,6 +205,7 @@ function gestionHumidite(){
         setEtape("Gestion Humidite", "Calcul Taux Humidite");
         let tauxHumidite = calculHumidite(tempSecAndHum);
         console.log("Taux Humidite : " + tauxHumidite +  "%");
+        dataArduino.tauxHumidite = tauxHumidite;
 
         setEtape("Gestion Humidite", "Regulation de l'humidite en cours");
         await regulateurHumidite(tauxHumidite);
@@ -199,6 +246,8 @@ function regulateurHumidite(tauxHumidite){
             }
 
             setEtape("Gestion Humidite", "Lancement Deshum: " + timerDesHum + " secondes");
+            dataArduino.tempsDeshum = timerDesHum;
+
             arduino.turnLow(6);
             await delay(timerDesHum, "seconde");
             arduino.turnHigh(6);
@@ -218,8 +267,11 @@ function periodeBrume(tempsFermetureBrume){
         while(continueMesure){
             arduino.turnLow(31);
             await delay(15, "seconde");
+            dataArduino.tempsOuvertureBrume = 15;
+
             arduino.turnHigh(31);
             await delay(tempsFermetureBrume, "seconde");
+            dataArduino.tempsFermetureBrume = tempsFermetureBrume;
         }
     });
 }
@@ -295,7 +347,10 @@ function mesureSecAndHum(){
         }
 
         tempSec = calMoy(totalSec);
+        dataArduino.moySec = tempSec + dataArduino.etalonageSec;
+        
         tempHum = calMoy(totalHum);
+        dataArduino.moyHum = tempHum + dataArduino.etalonageHum;
 
         console.log(tempSec);
         console.log(tempHum);
@@ -312,4 +367,7 @@ function setEtape(etape, detail){
     console.log("-----------------Changement Etape/Sous Details-------------------");
     console.log(etapeEnCour);
     console.log(detailEtape);
+
+    dataArduino.suiviProcess = etapeEnCour;
+    dataArduino.suiviSousProcess = detailEtape;
 }
