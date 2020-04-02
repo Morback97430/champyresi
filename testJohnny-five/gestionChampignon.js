@@ -28,23 +28,18 @@ let dataArduino = {
 };
 
 // Variable Champignon
-let consigneAir = 17;
-dataArduino.consigneAir = consigneAir;
+dataArduino.consigneAir = 17;
+dataArduino.modifConsigneAir = 0.12;
 
-let modifConsigneAir = 0.12;
-dataArduino.modifConsigneAir = modifConsigneAir;
+dataArduino.consigneHum = 86;
+dataArduino.modifConsigneHum = 0.12;
 
-let consigneHum = 86;
-dataArduino.consigneHum = consigneHum;
-
-let modifConsigneHum = 0.12;
-dataArduino.modifConsigneHum = modifConsigneHum;
-
-let nbJour = 10;
-dataArduino.nbJour = nbJour;
+dataArduino.nbJour = 10;
 
 let etapeEnCour = "Lancement de l'application";
+dataArduino.suiviProcess = "Lancement de l'application";
 let detailEtape = "Veuillez patienter";
+dataArduino.suiviSousProcess = "Veuillez patienter";
 
 const launch = async (port) => {
     // initialisation carte arduino
@@ -59,7 +54,7 @@ let continueGestion = true;
 const launchApp = async () => {
     await gestionTemperature();
 
-    if(nbJour > 5){
+    if(dataArduino.nbJour > 5){
         await gestionHumidite();
     }
 
@@ -77,16 +72,13 @@ module.exports = {launch};
 
 function launchCron(){
     setInterval(() => {
-        consigneAir -= modifConsigneAir;
-        dataArduino.consigneAir = consigneAir;
+        dataArduino.consigneAir -= dataArduino.modifConsigneAir;
 
-        consigneHum -= modifConsigneHum;
-        dataArduino.consigneHum = consigneHum;
+        dataArduino.consigneHum -= dataArduino.modifConsigneHum;
     }, hToMs(12));
 
     setInterval(() => {
-        nbJour++;
-        dataArduino.nbJour = nbJour;
+        dataArduino.nbJour++;
     }, hToMs(24));
 
     console.log("Cron lancer");
@@ -107,7 +99,7 @@ function gestionTemperature(){
         dataArduino.temperatureAir = temperatureAir + dataArduino.etalonageAir;
     
         setEtape("Gestion Temperature", "Regulation de l'air en cours");
-        await regulateurAir(temperatureAir, consigneAir);
+        await regulateurAir(temperatureAir, dataArduino.consigneAir);
 
         resolve();
     });
@@ -216,7 +208,7 @@ function gestionHumidite(){
 
 function regulateurHumidite(tauxHumidite){
     return new Promise(async (resolve, reject) => {
-        let deltaHum = consigneHum - tauxHumidite;
+        let deltaHum = dataArduino.consigneHum - tauxHumidite;
 
         if(deltaHum > 0){
             let tempsFermetureBrume = 0;
@@ -361,13 +353,10 @@ function mesureSecAndHum(){
 // FRIGO
 
 function setEtape(etape, detail){
-    etapeEnCour = etape;
-    detailEtape = detail;
+    dataArduino.suiviProcess = etape;
+    dataArduino.suiviSousProcess = detail;
 
     console.log("-----------------Changement Etape/Sous Details-------------------");
-    console.log(etapeEnCour);
-    console.log(detailEtape);
-
-    dataArduino.suiviProcess = etapeEnCour;
-    dataArduino.suiviSousProcess = detailEtape;
+    console.log(dataArduino.suiviProcess);
+    console.log(dataArduino.suiviSousProcess);
 }
