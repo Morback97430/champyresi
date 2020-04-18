@@ -2,30 +2,22 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const path = require('path');
-require("uglify-js");
 
 const server = app.listen(3000,() => {
-  console.log('Serveur en cour 3000!');
+    console.log('Serveur en cour 3000!');
 });
 
 let io = require('socket.io')(server);
 module.exports = io;
 
-const Arduino = require('./arduino');
-let arduino = new Arduino();
+let client = require('./client');
 
-require('./client')(arduino);
+io.on('connection', (socket) => {
+  client.setupSocket(socket);
+  client.sendEtat();
+});
 
-const getLastLine = require('./fileTools.js').getLastLine;
-const fileName = './log/arduino/logArduino.log';
-
-getLastLine(fileName, 1)
-    .then((lastData)=> {
-        arduino.parseData(lastData);
-    })
-    .catch((err)=> {
-        console.error(err);
-    })
+//gestionChampignon.launch("COM14");
 
 var cons = require('consolidate');
 

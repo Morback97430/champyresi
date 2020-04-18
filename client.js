@@ -1,124 +1,96 @@
 let io = require('./serveur');
+let gestionChampignon = require('./gestionChampignon');
+let serialPort = require('serialport');
 
-let loggerErreur = require("./logger").loggerErreur;
-
-io.on('connection', (socket) => {
-    Client.newConnection(socket);
-});
-
-function connectToArduino(arduino){
-    new Client(arduino);
+let client = {
+    io:io,
+    gestionChampignon:gestionChampignon,
+    setupSocket:setupSocket,
+    sendEtat:sendEtat,
+    emitDataArduino:emitDataArduino
 }
 
-class Client{
-    static get arduino(){
-        return this.hasOwnProperty('_arduino') ? this._arduino : void 0;
-    }
+gestionChampignon.setupClient(client);
 
-    static set arduino(p){
-        this._arduino = p;
-    }
-    
-    static get eventArduino(){
-        return this.hasOwnProperty('_eventArduino') ? this._eventArduino : void 0;
-    }
-
-    static set eventArduino(p){
-        this._eventArduino = p;
-    }
-
-    constructor(pArduino){
-        if(!Client.arduino){
-            Client.arduino = pArduino;
+function setupSocket(socket){
+    socket.on('choixPort', async (port) => {
+        try{
+          if(!gestionChampignon.isLaunch()){
+            await gestionChampignon.launch(port);
+            sendEtat();
+          }
+        }catch(err){
+          console.log(err);
         }
-    }
+    });
 
-    static newConnection(socket){
-        if(Client.arduino.isOpen()){
-            socket.emit("connectPort", true);
-            // TODO emit dataJson dernier Json Uniquement a se utilisateur
-            //Client.arduino.emitJson();
-        }
-        
-        socket.on('reqListPort', () => {
-            Client.arduino.listPort()
-                .then((ports, err) => {
-                    if(!err){
-                        io.emit('listPortName', ports.map(value => value.comName));
-                    }else{
-                        loggerErreur("Liste Port", err);
-                    }
-            });
-        });           
-        
-        socket.on('closePort', () =>{
-            Client.arduino.close()
-                .then(() => {
-                    io.emit("connectPort", false);
-                })
-                .catch((err) => {
-                    loggerErreur("closePort", err);
-                });
-        })
+    socket.on('reqListPort', () => {
+        serialPort.list()
+            .then((ports, err) => {
+                if(!err){
+                    io.emit('listPortName', ports.map(value => value.comName));
+                }else{
+                    console.log(err)
+                }
+        });
+    });
 
-        socket.on('choixPort', (choixPort) => {
-            Client.arduino.connect(choixPort)  
-            //setTimeout(()=>console.log(port.isOpen),5000);
-        });
+    socket.on('saveJour', (nbJour) => {
+        gestionChampignon.dataArduino.nbJour = nbJour;
+        emitDataArduino();
+    });
 
-        socket.on('saveJour', (nbJour) => {
-            Client.arduino.envoieData("J", {nBJ:nbJour});
-        });
+    socket.on('dureeActivation', (dureeActivation) => {
+        gestionChampignon.dataArduino.dureeActivationBrume = dureeActivation;
+        emitDataArduino();
+    });
 
-        socket.on('dureeActivation', (dureeActivation) => {
-            Client.arduino.envoieData("dA", {dA:dureeActivation});
-        });
+    socket.on("newConsigneAir", (consigneAir) => {
+        gestionChampignon.dataArduino.consigneAir = consigneAir;
+        emitDataArduino();
+    });
 
-        socket.on("newConsigneAir", (consigneAir) => {
-            consigneAir.toString().replace(",",".");
-            if(consigneAir == parseFloat(consigneAir)){
-                Client.arduino.envoieData("mA", {cA:consigneAir});
-            }
-        });
+    socket.on("newConsigneHum", (consigneHum) => {
+        gestionChampignon.dataArduino.consigneHum = consigneHum;
+        emitDataArduino();
+    });
 
-        socket.on("newConsigneHum", (consigneHum) => {
-            consigneHum.toString().replace(",",".");
-            if(consigneHum == parseFloat(consigneHum)){
-                Client.arduino.envoieData("mH",{cH:consigneHum});
-            }
-        });
+    socket.on("newModifAir", (modifAir) => {
+        gestionChampignon.dataArduino.modifConsigneAir = modifAir;
+        emitDataArduino();
+    });
 
-        socket.on("newModifAir", (modifAir) => {
-            modifAir.replace(",",".");
-            if(modifAir == parseFloat(modifAir)){
-                Client.arduino.envoieData("mFA",{cFA:modifAir});
-            }
-        });
-    
-        socket.on("newModifHum", (modifHum) => {
-            modifHum.replace(",", ".");
-            if(modifHum == parseFloat(modifHum)){
-                Client.arduino.envoieData("mFH",{cFH:modifHum});
-            }
-        });
+    socket.on("newModifHum", (modifHum) => {
+        gestionChampignon.dataArduino.modifConsigneHum = modifHum;
+        emitDataArduino();
+    });
 
-        socket.on("newEtalonageAir", (etalAir) => 
-        {
-            Client.arduino.envoieData("eAir",{eAir:etalAir});
-        });
+    socket.on("newEtalonageAir", (etalAir) => {
+        gestionChampignon.dataArduino.etalonageAir = etalAir;
+        emitDataArduino();
+    });
 
-        
-        socket.on("newEtalonageSec", (etalSec) => 
-        {
-            Client.arduino.envoieData("eSec",{eSec:etalSec});
-        });
+    socket.on("newEtalonageSec", (etalSec) => {
+        gestionChampignon.dataArduino.etalonageSec = etalSec;
+        emitDataArduino();
+    });
 
-        
-        socket.on("newEtalonageHum", (etalHum) => 
-        {
-            Client.arduino.envoieData("eHum",{eHum:etalHum});
-        });
+    socket.on("newEtalonageHum", (etalHum) => {
+        gestionChampignon.dataArduino.etalonageHum = etalHum;
+        emitDataArduino();
+    });
+}
+
+function sendEtat() {
+    if(!gestionChampignon.isLaunch()){
+        io.emit("connectPort", false);
+    }else{
+        io.emit("connectPort", true);
     }
 }
 
-module.exports = connectToArduino;
+function emitDataArduino(){
+    io.emit('dataJson', gestionChampignon.dataArduino);
+}
+
+module.exports = {...client};
